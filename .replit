@@ -1,0 +1,35 @@
+entrypoint = "main.sh"
+modules = ["bash"]
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["bash", "main.sh"]
+deploymentTarget = "cloudrun"
+
+[agent]
+expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "SANTRIX Import Tool"
+
+[[workflows.workflow]]
+name = "SANTRIX Import Tool"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./scripts/import_tool.sh"
+
+[workflows.workflow.metadata]
+outputType = "console"
