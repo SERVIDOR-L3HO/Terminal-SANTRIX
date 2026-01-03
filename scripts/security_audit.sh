@@ -14,15 +14,26 @@ echo "Target: $TARGET_URL"
 echo "Fecha: $(date)"
 echo "-------------------------------------------------"
 
-# 1. Simulación de carga DDoS para prueba de estrés
-echo "[+] Iniciando prueba de estrés (Simulación DDoS)..."
-# Usamos curl para enviar múltiples peticiones rápidas
-for i in {1..20}; do
-    curl -s -o /dev/null -w "%{http_code}" "$TARGET_URL" &
-done
-wait
+# 1. Prueba de estrés real (Intensiva)
+echo "[+] Iniciando prueba de estrés real (Ataque de inundación HTTP)..."
+echo "[!] ADVERTENCIA: Esta prueba puede afectar la disponibilidad de tu servidor."
+
+# Usamos xargs para ejecutar múltiples hilos de curl en paralelo de forma mucho más agresiva
+# -n 500: total de peticiones, -P 50: hilos simultáneos
+seq 500 | xargs -n 1 -P 50 curl -s -o /dev/null -w "%{http_code}\n" "$TARGET_URL" > /tmp/stress_results.txt &
+STRESS_PID=$!
+
+echo "[*] Ejecutando ataque en segundo plano (PID: $STRESS_PID)..."
+sleep 5 # Dejamos que corra unos segundos para ver el impacto inmediato
+echo "[*] Analizando impacto inicial..."
+
+# Contar cuántas peticiones fallaron o tardaron
+FAIL_COUNT=$(grep -c -v "200" /tmp/stress_results.txt)
+echo "[*] Peticiones bloqueadas/fallidas detectadas: $FAIL_COUNT"
+
+kill $STRESS_PID 2>/dev/null
 echo ""
-echo "[*] Prueba de estrés completada."
+echo "[*] Prueba de carga real finalizada."
 
 # 2. Análisis de fallos comunes
 echo "-------------------------------------------------"
