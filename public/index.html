@@ -18,6 +18,7 @@
             color: var(--text-color);
             font-family: 'JetBrains Mono', monospace;
             display: flex;
+            flex-direction: row;
             height: 100vh;
             overflow: hidden;
         }
@@ -29,11 +30,53 @@
             flex-direction: column;
             padding: 20px;
             overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 1000;
         }
         #main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
+            min-width: 0;
+        }
+        .mobile-header {
+            display: none;
+            background: var(--header-bg);
+            padding: 10px;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        .menu-toggle {
+            background: var(--card-bg);
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            #sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                transform: translateX(-100%);
+                width: 80%;
+                box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            }
+            #sidebar.active {
+                transform: translateX(0);
+            }
+            .mobile-header {
+                display: flex;
+            }
+            .tool-card {
+                padding: 15px; /* Larger touch targets */
+            }
         }
         .banner {
             color: var(--accent-color);
@@ -109,6 +152,10 @@
     </style>
 </head>
 <body>
+    <div class="mobile-header">
+        <span style="color: var(--accent-color); font-weight: bold;">SANTRIX HUB</span>
+        <button class="menu-toggle" onclick="toggleMenu()">MENU</button>
+    </div>
     <div id="sidebar">
         <div class="banner">SANTRIX HUB</div>
         
@@ -217,9 +264,16 @@
             socket.emit('input', data);
         });
 
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
         function runCommand(cmd) {
             socket.emit('input', cmd + (cmd.endsWith('\n') ? '' : '\n'));
             term.focus();
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
         }
 
         function simulateKey(code) {
