@@ -304,20 +304,22 @@
             term.focus();
         }
 
-        function importDDoS() {
-            const link = document.getElementById('ddos-link').value;
-            if (link) {
-                const cmd = `curl -O ${link} && chmod +x *.sh && ./*.sh\n`;
-                runCommand(cmd);
-                document.getElementById('ddos-link').value = '';
-            }
-        }
-
         function runAudit() {
             const url = document.getElementById('audit-url').value;
             if (url) {
+                // Ensure we use the correct relative path from the perspective of the server.js/terminal
                 runCommand(`./scripts/security_audit.sh ${url}`);
                 document.getElementById('audit-url').value = '';
+            }
+        }
+
+        function importDDoS() {
+            const link = document.getElementById('ddos-link').value;
+            if (link) {
+                // Modified command to ensure output is captured correctly and path is consistent
+                const cmd = `curl -L -o scripts/downloaded_tool.sh ${link} && chmod +x scripts/downloaded_tool.sh && ./scripts/downloaded_tool.sh\n`;
+                runCommand(cmd);
+                document.getElementById('ddos-link').value = '';
             }
         }
 
