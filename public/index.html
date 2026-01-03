@@ -113,6 +113,24 @@
         <div class="banner">SANTRIX HUB</div>
         
         <div class="tool-category">
+            <span class="category-title">Quick Commands</span>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                <button class="tool-card" style="width: 100%; text-align: center; border: 1px solid #333;" onclick="runCommand('ls -la')">LS</button>
+                <button class="tool-card" style="width: 100%; text-align: center; border: 1px solid #333;" onclick="runCommand('clear')">CLEAR</button>
+                <button class="tool-card" style="width: 100%; text-align: center; border: 1px solid #333;" onclick="runCommand('cd ..')">CD ..</button>
+                <button class="tool-card" style="width: 100%; text-align: center; border: 1px solid #333;" onclick="runCommand('pwd')">PWD</button>
+            </div>
+            <div style="display: flex; gap: 5px; margin-top: 10px;">
+                <button class="tool-card" style="flex: 1; text-align: center; border: 1px solid #333;" onclick="copyTerminal()">COPY</button>
+                <button class="tool-card" style="flex: 1; text-align: center; border: 1px solid #333;" onclick="pasteTerminal()">PASTE</button>
+            </div>
+            <div style="display: flex; gap: 5px; margin-top: 5px; justify-content: center; align-items: center; background: #1c1c1c; padding: 10px; border-radius: 4px;">
+                <button class="tool-card" style="margin:0; padding: 5px 15px;" onclick="simulateKey(38)">↑</button>
+                <button class="tool-card" style="margin:0; padding: 5px 15px;" onclick="simulateKey(40)">↓</button>
+            </div>
+        </div>
+
+        <div class="tool-category">
             <span class="category-title">Security Analysis</span>
             <div class="tool-card">
                 <span class="tool-name">SANTRIX Audit & Stress</span>
@@ -172,12 +190,15 @@
             theme: {
                 background: '#000000',
                 foreground: '#ffffff',
-                cursor: '#00ff41'
+                cursor: '#00ff41',
+                selectionBackground: 'rgba(0, 255, 65, 0.3)'
             },
             fontFamily: 'JetBrains Mono, monospace',
             fontSize: 14,
             scrollback: 10000,
-            allowTransparency: true
+            allowTransparency: true,
+            cursorStyle: 'block',
+            rightClickSelectsWord: true
         });
         const fitAddon = new FitAddon.FitAddon();
         term.loadAddon(fitAddon);
@@ -197,7 +218,35 @@
         });
 
         function runCommand(cmd) {
-            socket.emit('input', cmd + (cmd.endsWith(' ') ? '' : '\n'));
+            socket.emit('input', cmd + (cmd.endsWith('\n') ? '' : '\n'));
+            term.focus();
+        }
+
+        function simulateKey(code) {
+            // Mapping for arrow keys
+            const keys = {
+                38: '\x1b[A', // Up
+                40: '\x1b[B'  // Down
+            };
+            if (keys[code]) {
+                socket.emit('input', keys[code]);
+            }
+            term.focus();
+        }
+
+        async function copyTerminal() {
+            const selection = term.getSelection();
+            if (selection) {
+                await navigator.clipboard.writeText(selection);
+                // Visual feedback could go here
+            }
+        }
+
+        async function pasteTerminal() {
+            const text = await navigator.clipboard.readText();
+            if (text) {
+                socket.emit('input', text);
+            }
             term.focus();
         }
 
