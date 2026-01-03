@@ -1,23 +1,161 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SANTRIX Terminal</title>
+    <title>SANTRIX CYBERSECURITY HUB</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; background: #000; overflow: hidden; }
-        #terminal { height: 100vh; width: 100vw; }
+        :root {
+            --bg-color: #0a0a0a;
+            --accent-color: #00ff41;
+            --text-color: #d1d1d1;
+            --header-bg: #151515;
+            --card-bg: #1c1c1c;
+        }
+        body { 
+            margin: 0; 
+            background: var(--bg-color); 
+            color: var(--text-color);
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #sidebar {
+            width: 350px;
+            background: var(--header-bg);
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        #main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
         .banner {
-            color: #00ff00;
-            font-family: monospace;
-            padding: 10px;
-            border-bottom: 1px solid #333;
-            background: #111;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+        .tool-category {
+            margin-bottom: 25px;
+        }
+        .category-title {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: block;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 10px;
+        }
+        .tool-card {
+            background: var(--card-bg);
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .tool-card:hover {
+            border-color: var(--accent-color);
+            background: #252525;
+        }
+        .tool-name {
+            display: block;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        .tool-desc {
+            font-size: 0.75rem;
+            color: #888;
+            line-height: 1.4;
+        }
+        #terminal-container {
+            flex: 1;
+            background: #000;
+            position: relative;
+        }
+        #terminal {
+            height: 100%;
+            width: 100%;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
+        }
+        .ddos-input {
+            background: #000;
+            border: 1px solid #444;
+            color: var(--accent-color);
+            padding: 5px;
+            width: 100%;
+            margin-top: 5px;
+            font-family: inherit;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
-    <div class="banner">SANTRIX PROFESSIONAL TERMINAL v1.0</div>
-    <div id="terminal"></div>
+    <div id="sidebar">
+        <div class="banner">SANTRIX HUB</div>
+        
+        <div class="tool-category">
+            <span class="category-title">Web Security Analysis</span>
+            <div class="tool-card" onclick="runCommand('nmap -F ')">
+                <span class="tool-name">Nmap Scanner</span>
+                <span class="tool-desc">Escaneo rápido de puertos y servicios para identificar vulnerabilidades.</span>
+            </div>
+            <div class="tool-card" onclick="runCommand('curl -I ')">
+                <span class="tool-name">Header Analyzer</span>
+                <span class="tool-desc">Analiza las cabeceras HTTP para detectar configuraciones inseguras.</span>
+            </div>
+            <div class="tool-card" onclick="runCommand('whois ')">
+                <span class="tool-name">Whois Lookup</span>
+                <span class="tool-desc">Información de registro de dominio y red.</span>
+            </div>
+        </div>
+
+        <div class="tool-category">
+            <span class="category-title">DDoS Tools (Educational)</span>
+            <div class="tool-card">
+                <span class="tool-name">SANTRIX DDoS Importer</span>
+                <span class="tool-desc">Pega el enlace del script para importarlo y ejecutarlo.</span>
+                <input type="text" id="ddos-link" class="ddos-input" placeholder="URL del script .sh" 
+                       onkeypress="if(event.key === 'Enter') importDDoS()">
+            </div>
+        </div>
+
+        <div class="tool-category">
+            <span class="category-title">System Tools</span>
+            <div class="tool-card" onclick="runCommand('top')">
+                <span class="tool-name">Process Monitor</span>
+                <span class="tool-desc">Monitoriza el uso de CPU y memoria en tiempo real.</span>
+            </div>
+            <div class="tool-card" onclick="runCommand('ls -la')">
+                <span class="tool-name">File Explorer</span>
+                <span class="tool-desc">Lista todos los archivos, incluyendo los ocultos.</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div id="terminal-container">
+            <div id="terminal"></div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js"></script>
@@ -27,13 +165,20 @@
             cursorBlink: true,
             theme: {
                 background: '#000000',
-                foreground: '#ffffff'
-            }
+                foreground: '#ffffff',
+                cursor: '#00ff41'
+            },
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: 14,
+            scrollback: 10000,
+            allowTransparency: true
         });
         const fitAddon = new FitAddon.FitAddon();
         term.loadAddon(fitAddon);
         term.open(document.getElementById('terminal'));
-        fitAddon.fit();
+        
+        // Ensure fit happens after layout
+        setTimeout(() => fitAddon.fit(), 100);
 
         const socket = io();
 
@@ -44,6 +189,20 @@
         term.onData((data) => {
             socket.emit('input', data);
         });
+
+        function runCommand(cmd) {
+            socket.emit('input', cmd + (cmd.endsWith(' ') ? '' : '\n'));
+            term.focus();
+        }
+
+        function importDDoS() {
+            const link = document.getElementById('ddos-link').value;
+            if (link) {
+                const cmd = `curl -O ${link} && chmod +x *.sh && ./*.sh\n`;
+                runCommand(cmd);
+                document.getElementById('ddos-link').value = '';
+            }
+        }
 
         window.onresize = () => fitAddon.fit();
     </script>
