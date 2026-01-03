@@ -113,7 +113,13 @@
         <div class="banner">SANTRIX HUB</div>
         
         <div class="tool-category">
-            <span class="category-title">Web Security Analysis</span>
+            <span class="category-title">Security Analysis</span>
+            <div class="tool-card">
+                <span class="tool-name">SANTRIX Audit & Stress</span>
+                <span class="tool-desc">Analiza tu web y genera un reporte de fallos.</span>
+                <input type="text" id="audit-url" class="ddos-input" placeholder="https://tu-web.com" 
+                       onkeypress="if(event.key === 'Enter') runAudit()">
+            </div>
             <div class="tool-card" onclick="runCommand('nmap -F ')">
                 <span class="tool-name">Nmap Scanner</span>
                 <span class="tool-desc">Escaneo rápido de puertos y servicios para identificar vulnerabilidades.</span>
@@ -201,6 +207,14 @@
                 const cmd = `curl -O ${link} && chmod +x *.sh && ./*.sh\n`;
                 runCommand(cmd);
                 document.getElementById('ddos-link').value = '';
+            }
+        }
+
+        function runAudit() {
+            const url = document.getElementById('audit-url').value;
+            if (url) {
+                runCommand(`./scripts/security_audit.sh ${url}`);
+                document.getElementById('audit-url').value = '';
             }
         }
 
