@@ -11,7 +11,15 @@ echo ""
 
 # Verificar dependencias en Termux
 echo "[+] Verificando dependencias en Termux..."
-pkg install -y curl x11-repo nmap whois
+pkg install -y curl x11-repo nmap whois wget python git
+
+# Opción para instalar Metasploit
+echo "[+] ¿Deseas instalar Metasploit Framework? (Esto puede tardar varios minutos)"
+echo "[!] Nota: Metasploit requiere unos 500MB+ de espacio."
+# En un script automatizado para el usuario, daremos las instrucciones directas
+echo "Comando para instalar Metasploit en Termux:"
+echo "pkg install wget && wget https://github.com/gushmazuko/metasploit_in_termux/raw/master/metasploit.sh && chmod +x metasploit.sh && ./metasploit.sh"
+
 
 # Crear directorio de trabajo si no existe
 mkdir -p ~/santrix
