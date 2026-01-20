@@ -295,6 +295,19 @@
         </div>
 
         <div class="tool-category">
+            <span class="category-title">Mobile App Analysis</span>
+            <div class="tool-card">
+                <span class="tool-name">Mobile API Proxy</span>
+                <span class="tool-desc">Captura el tráfico de tu app móvil para buscar vulnerabilidades SQLi en su backend.</span>
+                <button class="tool-card" style="margin-top:5px; background:var(--accent-color); color:#000;" onclick="runCommand('nmap -p 8080 $(hostname -I)')">START PROXY</button>
+            </div>
+            <div class="tool-card" onclick="runCommand('./scripts/security_audit.sh mobile-api')">
+                <span class="tool-name">Static Analysis (APK)</span>
+                <span class="tool-desc">Analiza el código descompilado en busca de cadenas de conexión inseguras.</span>
+            </div>
+        </div>
+
+        <div class="tool-category">
             <span class="category-title">System Tools</span>
             <div class="tool-card" onclick="runCommand('msfconsole')">
                 <span class="tool-name">Metasploit Console</span>
