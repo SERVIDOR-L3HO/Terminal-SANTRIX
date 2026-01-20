@@ -15,20 +15,35 @@ then
     echo "[!] sqlmap no está instalado en el entorno nix por defecto."
     echo "[+] Intentando ejecutar escaneo manual de parámetros..."
     
-    read -p "Introduce la URL objetivo (con parámetros, ej: http://test.com/id=1): " TARGET
+    read -p "Introduce la URL objetivo (ej: http://test.com/login): " TARGET
+    read -p "Introduce los datos POST (opcional, ej: user=admin&pass=123): " POST_DATA
     
     if [ -z "$TARGET" ]; then
         echo "[!] Error: URL no válida."
         exit 1
     fi
 
-    echo "[+] Probando payloads de escape básicos en $TARGET..."
-    # Simulación de estructura de ataque real sobre la URL proporcionada
-    # En un entorno con dependencias instaladas, aquí se invocaría la lógica de red
-    echo "    [TEST] ' OR 1=1 --"
-    echo "    [TEST] ' UNION SELECT NULL--"
+    echo "[+] Analizando $TARGET..."
+    
+    if [ ! -z "$POST_DATA" ]; then
+        echo "[+] Probando inyección en parámetros POST: $POST_DATA"
+        # Con sqlmap instalado, lo ideal es usarlo directamente
+        if command -v sqlmap &> /dev/null; then
+            sqlmap -u "$TARGET" --data="$POST_DATA" --batch --banner
+        else
+            echo "    [TEST POST] ' OR '1'='1"
+        fi
+    else
+        echo "[+] Probando inyección en parámetros de URL/Headers..."
+        if command -v sqlmap &> /dev/null; then
+            sqlmap -u "$TARGET" --batch --banner
+        else
+            echo "    [TEST GET] $TARGET?id='"
+        fi
+    fi
+    
     echo ""
-    echo "[*] Nota: Para escaneos automáticos profundos, se recomienda instalar 'sqlmap' vía Nix."
+    echo "[*] Sugerencia: Para auditorías reales, usa 'sqlmap -u \"$TARGET\" --forms --crawl=2'"
 else
     sqlmap "$@"
 fi

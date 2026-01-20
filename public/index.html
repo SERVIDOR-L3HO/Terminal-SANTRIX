@@ -210,9 +210,11 @@
             </div>
             <div class="tool-card">
                 <span class="tool-name">SQLi Scanner (SANTRIX)</span>
-                <span class="tool-desc">Escanea parámetros de una URL en busca de vulnerabilidades SQL Injection.</span>
-                <input type="text" id="sqli-url" class="ddos-input" placeholder="http://objetivo.com/id=1" 
+                <span class="tool-desc">Escanea una URL o parámetros POST en busca de vulnerabilidades SQLi.</span>
+                <input type="text" id="sqli-url" class="ddos-input" placeholder="URL: http://objetivo.com/login" style="margin-bottom:5px;">
+                <input type="text" id="sqli-post" class="ddos-input" placeholder="POST: user=admin&pass=1" 
                        onkeypress="if(event.key === 'Enter') runSQLi()">
+                <button class="tool-card" style="margin-top:5px; background:var(--accent-color); color:#000;" onclick="runSQLi()">SCAN NOW</button>
             </div>
             <div class="tool-card" onclick="runCommand('nmap -F ')">
                 <span class="tool-name">Nmap Scanner</span>
@@ -411,9 +413,15 @@
 
         function runSQLi() {
             const url = document.getElementById('sqli-url').value;
+            const post = document.getElementById('sqli-post').value;
             if (url) {
-                runCommand(`./scripts/sql_scanner.sh ${url}`);
+                if (post) {
+                    runCommand(`./scripts/sql_scanner.sh "${url}" --data="${post}"`);
+                } else {
+                    runCommand(`./scripts/sql_scanner.sh "${url}"`);
+                }
                 document.getElementById('sqli-url').value = '';
+                document.getElementById('sqli-post').value = '';
             }
         }
 
