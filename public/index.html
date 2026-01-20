@@ -208,6 +208,12 @@
                 <input type="text" id="audit-url" class="ddos-input" placeholder="https://tu-web.com" 
                        onkeypress="if(event.key === 'Enter') runAudit()">
             </div>
+            <div class="tool-card">
+                <span class="tool-name">SQLi Scanner (SANTRIX)</span>
+                <span class="tool-desc">Escanea parámetros de una URL en busca de vulnerabilidades SQL Injection.</span>
+                <input type="text" id="sqli-url" class="ddos-input" placeholder="http://objetivo.com/id=1" 
+                       onkeypress="if(event.key === 'Enter') runSQLi()">
+            </div>
             <div class="tool-card" onclick="runCommand('nmap -F ')">
                 <span class="tool-name">Nmap Scanner</span>
                 <span class="tool-desc">Escaneo rápido de puertos y servicios para identificar vulnerabilidades.</span>
@@ -400,6 +406,14 @@
                 // Ensure we use the correct relative path from the perspective of the server.js/terminal
                 runCommand(`./scripts/security_audit.sh ${url}`);
                 document.getElementById('audit-url').value = '';
+            }
+        }
+
+        function runSQLi() {
+            const url = document.getElementById('sqli-url').value;
+            if (url) {
+                runCommand(`./scripts/sql_scanner.sh ${url}`);
+                document.getElementById('sqli-url').value = '';
             }
         }
 
