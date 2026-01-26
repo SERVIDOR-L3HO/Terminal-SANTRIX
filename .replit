@@ -1,5 +1,5 @@
 entrypoint = "main.sh"
-modules = ["web", "bash", "nodejs-20", "nix", "python-3.11"]
+modules = ["web", "bash", "nodejs-20", "nix"]
 
 [nix]
 channel = "stable-25_05"
