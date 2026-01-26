@@ -1,61 +1,25 @@
 # replit.md
 
 ## Overview
-
-This is a web-based terminal application called "SANTRIX CYBERSECURITY HUB". It provides a browser-accessible terminal interface that connects to a real shell session on the server. Users can interact with a full terminal environment directly from their web browser, making it suitable for remote shell access, educational purposes, or cybersecurity training environments.
+This is a web-based terminal application called "SANTRIX CYBERSECURITY HUB". It provides a real terminal interface for cybersecurity testing and auditing.
 
 ## User Preferences
-
-Preferred communication style: Simple, everyday language.
+- **COMMUNICATION STYLE:** Simple, everyday language.
+- **DEVELOPMENT PREFERENCE:** ALWAYS use real code, real scripts, and functional tools. NEVER use mock data, simulations, placeholders, or "educational examples" that don't execute real commands. Every feature added must be functional and connected to the backend terminal or system.
+- **GITHUB EXPORT:** Ensure that all tools and scripts remain functional and "real" after export.
 
 ## System Architecture
-
 ### Frontend Architecture
-- **Static HTML/CSS/JS** served from the `public/` directory
-- **xterm.js** (v5.3.0) provides the terminal UI component in the browser
-- **xterm-addon-fit** handles responsive terminal sizing
-- **Socket.IO client** manages real-time communication with the server
-- **Styling**: Custom cybersecurity-themed dark UI with JetBrains Mono font, green accent colors
+- **Static HTML/CSS/JS** in `public/`
+- **xterm.js** for the terminal UI
+- **Socket.IO client** for real-time I/O
 
 ### Backend Architecture
-- **Express.js** (v5.x) serves as the web server framework
-- **Node.js** runtime with a single entry point (`server.js`)
-- **Socket.IO** (v4.x) handles WebSocket connections for real-time terminal I/O
-- **node-pty** spawns and manages pseudo-terminal processes on the server
+- **Express.js** web server
+- **Socket.IO** for WebSocket communication
+- **node-pty** to manage real shell processes
 
-### Real-time Communication Flow
-1. Client connects via Socket.IO
-2. Server spawns a new PTY process (bash or system default shell)
-3. Bidirectional data flow:
-   - `input` event: Client keystrokes → Server PTY
-   - `output` event: Server PTY output → Client terminal
-   - `resize` event: Client terminal resize → Server PTY resize
-4. On disconnect, PTY process is killed
-
-### Server Configuration
-- Runs on port 5000
-- Binds to all interfaces (0.0.0.0)
-- Uses environment's default shell (`$SHELL` or falls back to `bash`)
-- PTY initialized with 80 columns × 24 rows
-
-## External Dependencies
-
-### NPM Packages
-| Package | Purpose |
-|---------|---------|
-| express | Web server and static file serving |
-| socket.io | WebSocket-based real-time communication |
-| node-pty | Native pseudo-terminal bindings for Node.js |
-| xterm | Terminal emulator UI (client-side) |
-| xterm-addon-fit | Terminal resizing addon |
-
-### CDN Resources
-- xterm CSS: `cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css`
-- Google Fonts: JetBrains Mono font family
-
-### System Dependencies
-- Requires a Unix-like shell environment (bash or system shell)
-- node-pty requires native compilation (may need build tools on some systems)
-
-### No Database
-This application is stateless and does not use any database or persistent storage.
+## Recent Changes
+- Added "Fintech Security" category to the menu.
+- Implemented `scripts/payment_bypass.sh` for real-world payment gateway auditing (security headers, parameter manipulation, and webhook scanning).
+- Updated `public/index.html` to execute real shell commands via the terminal.

