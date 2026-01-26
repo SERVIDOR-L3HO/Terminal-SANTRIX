@@ -311,6 +311,17 @@
         </div>
 
         <div class="tool-category">
+            <span class="category-title">Fintech Security</span>
+            <div class="tool-card">
+                <span class="tool-name">Payment Bypass Auditor</span>
+                <span class="tool-desc">Prueba real de manipulación de parámetros y validación de webhooks en tu pasarela.</span>
+                <input type="text" id="payment-url" class="ddos-input" placeholder="https://tu-tienda.com/pay" 
+                       onkeypress="if(event.key === 'Enter') runPaymentBypass()">
+                <button class="tool-card" style="margin-top:5px; background:var(--accent-color); color:#000;" onclick="runPaymentBypass()">TEST GATEWAY</button>
+            </div>
+        </div>
+
+        <div class="tool-category">
             <span class="category-title">System Tools</span>
             <div class="tool-card" onclick="runCommand('msfconsole')">
                 <span class="tool-name">Metasploit Console</span>
@@ -438,6 +449,14 @@
                 runCommand(cmd);
                 document.getElementById('sqli-url').value = '';
                 document.getElementById('sqli-post').value = '';
+            }
+        }
+
+        function runPaymentBypass() {
+            const url = document.getElementById('payment-url').value;
+            if (url) {
+                runCommand(`./scripts/payment_bypass.sh "${url}"`);
+                document.getElementById('payment-url').value = '';
             }
         }
 
