@@ -201,6 +201,29 @@
         </div>
 
         <div class="tool-category">
+            <span class="category-title">Web Enumeration (HTB/THM)</span>
+            <div class="tool-card">
+                <span class="tool-name">Web Enumerator Pro</span>
+                <span class="tool-desc">Directorios, subdominios y fuzzing. Perfecto para HackTheBox y TryHackMe.</span>
+                <input type="text" id="enum-url" class="ddos-input" placeholder="http://10.10.10.10" style="margin-bottom:5px;">
+                <div style="display:flex; gap:5px; margin-bottom:5px; flex-wrap:wrap;">
+                    <button class="tool-card" style="flex:1; font-size:0.7rem; padding:6px; background:#1a1a2e; border-color:#4444ff;" onclick="runEnum('dir')">DIR</button>
+                    <button class="tool-card" style="flex:1; font-size:0.7rem; padding:6px; background:#1a1a2e; border-color:#4444ff;" onclick="runEnum('dns')">DNS</button>
+                    <button class="tool-card" style="flex:1; font-size:0.7rem; padding:6px; background:#1a1a2e; border-color:#4444ff;" onclick="runEnum('fuzz')">FUZZ</button>
+                    <button class="tool-card" style="flex:1; font-size:0.7rem; padding:6px; background:var(--accent-color); color:#000; border-color:var(--accent-color);" onclick="runEnum('all')">ALL</button>
+                </div>
+            </div>
+            <div class="tool-card" onclick="runCommand('gobuster dir -u ')">
+                <span class="tool-name">Gobuster (Manual)</span>
+                <span class="tool-desc">Lanza gobuster directamente en el terminal para mayor control.</span>
+            </div>
+            <div class="tool-card" onclick="runCommand('ffuf -u FUZZ -w /tmp/santrix_wordlists/common.txt -mc 200,301,403 ')">
+                <span class="tool-name">FFUF (Fuzzer)</span>
+                <span class="tool-desc">Fuzzing rápido con ffuf, el estándar en CTFs.</span>
+            </div>
+        </div>
+
+        <div class="tool-category">
             <span class="category-title">Security Analysis</span>
             <div class="tool-card">
                 <span class="tool-name">SANTRIX Audit & Stress</span>
@@ -457,6 +480,14 @@
             if (url) {
                 runCommand(`./scripts/payment_bypass.sh "${url}"`);
                 document.getElementById('payment-url').value = '';
+            }
+        }
+
+        function runEnum(mode) {
+            const url = document.getElementById('enum-url').value;
+            if (url) {
+                runCommand(`./scripts/web_enum.sh "${url}" ${mode}`);
+                document.getElementById('enum-url').value = '';
             }
         }
 

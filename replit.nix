@@ -1,5 +1,7 @@
 { pkgs }: {
   deps = [
+    pkgs.ffuf
+    pkgs.gobuster
     pkgs.nmap
     pkgs.sqlmap
     pkgs.postgresql
