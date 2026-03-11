@@ -1,0 +1,43 @@
+=== SANTRIX WEB ENUMERATION REPORT ===
+OBJETIVO : https://futbol-en-vivo.pages.dev/
+FECHA    : Wed Mar 11 08:45:18 PM UTC 2026
+MODO     : all
+=======================================
+
+--- CABECERAS HTTP ---
+HTTP/2 200 
+date: Wed, 11 Mar 2026 20:45:18 GMT
+content-type: text/html; charset=utf-8
+access-control-allow-origin: *
+cache-control: public, max-age=0, must-revalidate
+etag: "57ec5df94e07373862bc70b853a4e364"
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=qq22PMSx5z7ISZJVswTvfJhFhNfmEMh0FTmOArlPUKmMxik%2BNcM1DrAfkaqRdy9Y0aVrwvB9z272VSVEtkW4BpXY96Ib7KL95%2Ba7Z1K%2Fdwp1HHJTLV72dA%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: 9dad66ef5f7c615a-ORD
+alt-svc: h3=":443"; ma=86400
+
+
+--- DIRECTORIOS (gobuster dir) ---
+
+--- SUBDOMINIOS (gobuster dns) ---
+
+--- FFUF FUZZING ---
+
+--- PUERTOS ABIERTOS (nmap) ---
+Starting Nmap 7.97 ( https://nmap.org ) at 2026-03-11 20:45 +0000
+Nmap scan report for futbol-en-vivo.pages.dev (172.66.44.176)
+Host is up (0.012s latency).
+Other addresses for futbol-en-vivo.pages.dev (not scanned): 172.66.47.80 2606:4700:310c::ac42:2f50 2606:4700:310c::ac42:2cb0
+Not shown: 96 filtered tcp ports (no-response)
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT     STATE SERVICE
+80/tcp   open  http
+443/tcp  open  https
+8080/tcp open  http-proxy
+8443/tcp open  https-alt
+
+Nmap done: 1 IP address (1 host up) scanned in 2.18 seconds
+
