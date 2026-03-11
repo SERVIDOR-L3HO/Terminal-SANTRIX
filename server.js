@@ -9,6 +9,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.static('public'));
+app.use('/scripts', express.static('scripts'));
 
 io.on('connection', (socket) => {
     const shell = process.env.SHELL || 'bash';
