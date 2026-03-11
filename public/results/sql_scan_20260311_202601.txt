@@ -1,0 +1,6 @@
+=== REPORTE DE EXTRACCIÓN SANTRIX ===
+OBJETIVO: https://golazoz.com/
+FECHA: Wed Mar 11 08:26:03 PM UTC 2026
+=====================================
+
+[!] No se extrajeron tablas o el objetivo no es vulnerable.

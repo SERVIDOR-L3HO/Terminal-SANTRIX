@@ -1,0 +1,6 @@
+=== REPORTE DE EXTRACCIÓN SANTRIX ===
+OBJETIVO: https://futbol-en-vivo.pages.dev/
+FECHA: Wed Mar 11 08:27:42 PM UTC 2026
+=====================================
+
+[!] No se extrajeron tablas o el objetivo no es vulnerable.
